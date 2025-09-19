@@ -1,107 +1,151 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import {
-    getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import {
-    getFirestore, collection, addDoc, onSnapshot
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
+// -------------------------
+// Firebase Initialization
+// -------------------------
 const firebaseConfig = {
-    apiKey: "AIzaSyDSDHuA5Vd4MbK4zICi6SnMKa6ZmYa1wAQ",
-    authDomain: "vat-a7783.firebaseapp.com",
-    projectId: "vat-a7783",
-    storageBucket: "vat-a7783.firebasestorage.app",
-    messagingSenderId: "383894705786",
-    appId: "1:383894705786:web:8cabbbc6a9bb13cae60dc3",
-    measurementId: "G-BFVMD58DGM"
+  apiKey: "AIzaSyCGecLDtzjqcnNnedy6EVpsKJ2SZ6sNZEc",
+  authDomain: "vachanaryammantirth.firebaseapp.com",
+  projectId: "vachanaryammantirth",
+  storageBucket: "vachanaryammantirth.appspot.com",
+  messagingSenderId: "813547250594",
+  appId: "1:813547250594:web:777686d6503b966c9d08fb",
+  measurementId: "G-4G8SRM2RT6"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-// ---- Username → Email ----
-const users = {
-    "admin": { email: "admin@vacharyatirt.com", role: "admin" },
-    "aryamman": { email: "aryamman@vacharyatirt.com", role: "user" },
-    "vachan": { email: "vachan@vacharyatirt.com", role: "user" },
-    "tirth": { email: "tirth@vacharyatirt.com", role: "user" }
+// -------------------------
+// DOM References
+// -------------------------
+const DOM = {
+  loginContainer: document.getElementById("login-container"),
+  videosContainer: document.getElementById("videos-container"),
+  adminContainer: document.getElementById("admin-container"),
+  addVideoForm: document.getElementById("admin-form"),
+  adminMessage: document.getElementById("admin-message"),
+  logoutBtn: document.getElementById("logout-btn"),
+  loginForm: document.getElementById("login-form"),
+  loading: document.getElementById("loading"),
+  videoList: document.querySelector(".list")
 };
 
-// Detect current page
-const path = window.location.pathname;
+// -------------------------
+// Utility Functions
+// -------------------------
+function usernameToEmail(username) {
+  return username.trim().toLowerCase() + "@vat.in";
+}
 
-// ---- LOGIN PAGE ----
-if (path.endsWith("login.html") || path === "/") {
-    const loginForm = document.getElementById("login-form");
-    if (loginForm) {
-        loginForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const username = e.target.username.value.trim();
-            const password = e.target.password.value;
+function showContainer(containerName) {
+  DOM.loginContainer.style.display = "none";
+  DOM.videosContainer.style.display = "none";
+  DOM.adminContainer.style.display = "none";
 
-            if (!users[username]) {
-                alert("Invalid username");
-                return;
-            }
+  if (containerName === "login") DOM.loginContainer.style.display = "block";
+  else if (containerName === "videos") DOM.videosContainer.style.display = "block";
+  else if (containerName === "admin") DOM.adminContainer.style.display = "block";
+}
 
-            const email = users[username].email;
-            signInWithEmailAndPassword(auth, email, password)
-                .then(() => {
-                    window.location.href = "videos.html";
-                })
-                .catch(err => alert("Login failed: " + err.message));
-        });
+// -------------------------
+// Login Logic
+// -------------------------
+if (DOM.loginForm) {
+  DOM.loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    try {
+      await auth.signInWithEmailAndPassword(usernameToEmail(username), password);
+      DOM.loginForm.reset();
+    } catch (err) {
+      alert("Login failed: " + err.message);
+      console.error(err);
     }
+  });
 }
 
-// ---- VIDEOS PAGE ----
-if (path.endsWith("videos.html")) {
-    const videoList = document.getElementById("video-list");
-    const addForm = document.getElementById("add-form");
-    const logoutBtn = document.getElementById("logout-btn");
+// -------------------------
+// Load Videos
+// -------------------------
+async function loadVideos() {
+  if (!DOM.videoList) return;
+  DOM.videoList.innerHTML = "";
 
-    let currentRole = null;
+  try {
+    const snapshot = await db.collection("videos").get();
+    snapshot.forEach(doc => {
+      const { title, url } = doc.data();
+      const item = document.createElement("a");
+      item.className = "item";
+      item.href = url;
+      item.target = "_blank";
 
-    onAuthStateChanged(auth, (user) => {
-        if (!user) {
-            window.location.href = "login.html";
-            return;
-        }
+      const thumbnail = document.createElement("div");
+      thumbnail.className = "thumbnail";
+      thumbnail.textContent = title;
 
-        const username = Object.keys(users).find(
-            key => users[key].email === user.email
-        );
-        currentRole = users[username].role;
-
-        if (currentRole === "admin") {
-            addForm.style.display = "block";
-        } else {
-            addForm.style.display = "none";
-        }
-
-        // Load videos
-        onSnapshot(collection(db, "videos"), (snapshot) => {
-            videoList.innerHTML = "";
-            snapshot.forEach((doc) => {
-                const data = doc.data();
-                const item = document.createElement("a");
-                item.className = "item";
-                item.href = data.link;
-                item.target = "_blank";
-                item.innerHTML = `<div>${data.title}</div>`;
-                videoList.appendChild(item);
-            });
-        });
+      item.appendChild(thumbnail);
+      DOM.videoList.appendChild(item);
     });
-
-    addForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const title = e.target.title.value;
-        const link = e.target.link.value;
-        if (currentRole === "admin") {
-            await addDoc(collection(db, "videos"), { title, link });
-            e.target.reset();
-        }
-    });
+  } catch (err) {
+    console.error("Error loading videos:", err);
+  }
 }
+
+// -------------------------
+// Admin Add Video
+// -------------------------
+if (DOM.addVideoForm) {
+  DOM.addVideoForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const title = document.getElementById("video-title").value.trim();
+    const url = document.getElementById("video-url").value.trim();
+    if (!title || !url) return;
+
+    try {
+      await db.collection("videos").add({ title, url });
+      if (DOM.adminMessage) DOM.adminMessage.textContent = "Video added successfully!";
+      DOM.addVideoForm.reset();
+      loadVideos();
+    } catch (err) {
+      if (DOM.adminMessage) DOM.adminMessage.textContent = "Error adding video: " + err.message;
+      console.error(err);
+    }
+  });
+}
+
+// -------------------------
+// Logout Logic
+// -------------------------
+if (DOM.logoutBtn) {
+  DOM.logoutBtn.addEventListener("click", async () => {
+    try {
+      await auth.signOut();
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+  });
+}
+
+// -------------------------
+// Auth State Listener
+// -------------------------
+auth.onAuthStateChanged(async (user) => {
+  if (DOM.loading) DOM.loading.style.display = "none";
+
+  if (user) {
+    const email = user.email.toLowerCase();
+    if (email === "shitshow@vat.in") {
+      showContainer("admin");
+      DOM.videosContainer.style.display = "block"; // admin sees videos
+    } else {
+      showContainer("videos");
+    }
+    loadVideos();
+    if (DOM.logoutBtn) DOM.logoutBtn.style.display = "block";
+  } else {
+    showContainer("login");
+    if (DOM.logoutBtn) DOM.logoutBtn.style.display = "none";
+  }
+});
