@@ -1,6 +1,3 @@
-/* =========================
-   Root Variables
-========================= */
 :root {
   --bg-color: #0d1117;
   --container-bg: #161b22;
@@ -12,9 +9,6 @@
   --hover-transform: translateY(-6px) scale(1.02);
 }
 
-/* =========================
-   Global Styles
-========================= */
 * {
   margin: 0;
   padding: 0;
@@ -29,9 +23,6 @@ body {
   font-size: 1.2rem;
 }
 
-/* =========================
-   Container
-========================= */
 .container {
   max-width: 1000px;
   margin: auto;
@@ -41,9 +32,6 @@ body {
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
-/* =========================
-   Header
-========================= */
 h1 {
   font-size: 4rem;
   font-weight: 900;
@@ -53,9 +41,6 @@ h1 {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
-/* =========================
-   Video Grid
-========================= */
 .list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -79,9 +64,6 @@ h1 {
   box-shadow: var(--hover-shadow);
 }
 
-/* =========================
-   Thumbnails
-========================= */
 .thumbnail {
   background: var(--thumbnail-bg);
   display: flex;
@@ -101,7 +83,6 @@ h1 {
   background: #111827;
 }
 
-/* Number badges */
 .thumbnail::before {
   content: counter(video);
   counter-increment: video;
@@ -116,9 +97,6 @@ h1 {
   font-weight: bold;
 }
 
-/* =========================
-   Admin Form
-========================= */
 #admin-container {
   max-width: 400px;
   margin: 3rem auto;
@@ -133,14 +111,10 @@ h1 {
   color: #6fefc7;
   font-size: 1.8rem;
   margin-bottom: 2rem;
-  /* increase space below the title */
   font-weight: 900;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   text-align: center;
 }
-
-
-
 
 #admin-container input {
   width: 100%;
@@ -160,7 +134,6 @@ h1 {
   transform: scale(1.02);
 }
 
-
 #admin-container button {
   width: 100%;
   padding: 0.9rem;
@@ -177,16 +150,9 @@ h1 {
 
 #admin-container button:hover {
   transform: translateY(-5px) scale(1.08);
-  /* bigger hover */
   box-shadow: 0 16px 28px rgba(0, 0, 0, 0.5);
 }
 
-
-/* =========================
-   Responsive Styles
-========================= */
-
-/* Tablets (iPads) */
 @media (max-width: 1024px) {
   h1 {
     font-size: 3.5rem;
@@ -198,7 +164,6 @@ h1 {
   }
 }
 
-/* Small Tablets / Phones */
 @media (max-width: 768px) {
   h1 {
     font-size: 3rem;
@@ -211,7 +176,6 @@ h1 {
   }
 }
 
-/* Mobile */
 @media (max-width: 480px) {
   .container {
     padding: 1rem;
@@ -349,15 +313,14 @@ h1 {
 
 #admin-container {
   display: none;
-  /* hide on page load */
 }
 
 .video-table {
-  background: #161b22; /* slightly lighter than page bg */
-  border: 2px solid #2d3748; /* table border */
+  background: #161b22;
+  border: 2px solid #2d3748;
   border-radius: 1rem;
   padding: 1rem;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
 }
 
 .video-table .list {
@@ -368,7 +331,7 @@ h1 {
 
 #logout-container {
   display: flex;
-  justify-content: flex-end; /* aligns to right */
+  justify-content: flex-end;
   margin-bottom: 1rem;
 }
 
@@ -385,7 +348,7 @@ h1 {
 
 #logout-btn:hover {
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
 #logout-header {
@@ -401,7 +364,7 @@ h1 {
 #login-container,
 #admin-container,
 #videos-container {
-  display: none; /* hide all by default */
+  display: none;
 }
 
 #loading {
@@ -420,7 +383,7 @@ h1 {
 
 #logout-container {
   display: flex;
-  justify-content: flex-end; /* aligns to the right */
+  justify-content: flex-end;
   margin-bottom: 1rem;
 }
 
@@ -434,10 +397,10 @@ h1 {
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   font-size: 0.95rem;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 #logout-btn:hover {
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 12px 20px rgba(0,0,0,0.4);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4);
 }
