@@ -5,11 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VAT</title>
-  <!-- Firebase App (required) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <!-- Firebase Auth -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-  <!-- Firebase Firestore -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" href="style.css">
@@ -18,43 +15,36 @@
 <body>
   <h1>VAT</h1>
 
-  <!-- Loading Screen -->
   <div id="loading">
     <p style="color:#6fefc7; font-weight:bold;">Loading...</p>
   </div>
 
-  <!-- Login Screen -->
   <div id="login-container" class="card-container">
-    <h2>Login</h2>
+    <h2>login</h2>
     <form id="login-form">
       <input type="text" id="username" placeholder="Username">
       <input type="password" id="password" placeholder="Password">
-      <button type="submit">Login</button>
+      <button type="submit">login</button>
     </form>
   </div>
 
-  <!-- Admin Add Video Page -->
   <div id="admin-container" class="card-container">
-    <h2>Add a New Video</h2>
+    <h2>add a new video</h2>
     <form id="add-video-form">
       <input type="text" id="video-title" placeholder="Video Title">
       <input type="text" id="video-url" placeholder="YouTube URL">
-      <button type="submit">Add Video</button>
+      <button type="submit">add video</button>
     </form>
     <p id="admin-message" style="color:#6fefc7;"></p>
   </div>
 
-  <!-- Videos Container -->
-  <!-- Videos Container -->
   <div id="videos-container">
     <div id="logout-container">
-      <button id="logout-btn">Logout</button>
+      <button id="logout-btn">logout</button>
     </div>
     <div class="list" id="video-list"></div>
   </div>
 
-
-  <!-- Your JS -->
   <script src="app.js"></script>
 </body>
 
