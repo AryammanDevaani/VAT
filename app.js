@@ -1,6 +1,3 @@
-// -------------------------
-// Firebase Initialization
-// -------------------------
 const firebaseConfig = {
   apiKey: "AIzaSyCGecLDtzjqcnNnedy6EVpsKJ2SZ6sNZEc",
   authDomain: "vachanaryammantirth.firebaseapp.com",
@@ -15,9 +12,6 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// -------------------------
-// DOM References
-// -------------------------
 const DOM = {
   loginContainer: document.getElementById("login-container"),
   videosContainer: document.getElementById("videos-container"),
@@ -30,9 +24,6 @@ const DOM = {
   videoList: document.querySelector(".list")
 };
 
-// -------------------------
-// Utility Functions
-// -------------------------
 function usernameToEmail(username) {
   return username.trim().toLowerCase() + "@vat.in";
 }
@@ -47,9 +38,6 @@ function showContainer(containerName) {
   else if (containerName === "admin") DOM.adminContainer.style.display = "block";
 }
 
-// -------------------------
-// Login Logic
-// -------------------------
 if (DOM.loginForm) {
   DOM.loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -65,9 +53,6 @@ if (DOM.loginForm) {
   });
 }
 
-// -------------------------
-// Load Videos
-// -------------------------
 async function loadVideos() {
   if (!DOM.videoList) return;
   DOM.videoList.innerHTML = "";
@@ -93,9 +78,6 @@ async function loadVideos() {
   }
 }
 
-// -------------------------
-// Admin Add Video
-// -------------------------
 if (DOM.addVideoForm) {
   DOM.addVideoForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -115,9 +97,6 @@ if (DOM.addVideoForm) {
   });
 }
 
-// -------------------------
-// Logout Logic
-// -------------------------
 if (DOM.logoutBtn) {
   DOM.logoutBtn.addEventListener("click", async () => {
     try {
@@ -128,9 +107,6 @@ if (DOM.logoutBtn) {
   });
 }
 
-// -------------------------
-// Auth State Listener
-// -------------------------
 auth.onAuthStateChanged(async (user) => {
   if (DOM.loading) DOM.loading.style.display = "none";
 
@@ -138,7 +114,7 @@ auth.onAuthStateChanged(async (user) => {
     const email = user.email.toLowerCase();
     if (email === "shitshow@vat.in") {
       showContainer("admin");
-      DOM.videosContainer.style.display = "block"; // admin sees videos
+      DOM.videosContainer.style.display = "block";
     } else {
       showContainer("videos");
     }
