@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,13 +9,21 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" href="style.css">
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' https://www.gstatic.com;
+    connect-src 'self' https://vachanaryammantirth.firebaseio.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com;
+    img-src 'self' data:;
+    style-src 'self' 'unsafe-inline';
+    font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com;
+    frame-ancestors 'none';
+  ">
 </head>
-
 <body>
   <h1>VAT</h1>
 
   <div id="loading">
-    <p style="color:#6fefc7; font-weight:bold;">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem adipisci quos sed at nihil pariatur explicabo sapiente aspernatur exercitationem enim reiciendis veritatis autem, accusamus suscipit et. Fugiat eum saepe facilis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae adipisci accusantium laboriosam maiores aliquam ratione quo ullam, aperiam a officia repellat ea minus vitae sunt quae, ipsa quod expedita accusamus.</p>
+    <p style="color:#6fefc7; font-weight:bold;">...</p>
   </div>
 
   <div id="login-container" class="card-container">
@@ -26,6 +33,7 @@
       <input type="password" id="password" placeholder="password">
       <button type="submit">login</button>
     </form>
+    <p class="message" id="login-message"></p>
   </div>
 
   <div id="admin-container" class="card-container">
@@ -35,7 +43,7 @@
       <input type="text" id="video-url" placeholder="URL">
       <button type="submit">add video</button>
     </form>
-    <p id="admin-message" style="color:#6fefc7;"></p>
+    <p class="message" id="admin-message"></p>
   </div>
 
   <div id="videos-container">
@@ -47,5 +55,4 @@
 
   <script src="app.js"></script>
 </body>
-
 </html>

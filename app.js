@@ -16,8 +16,9 @@ const DOM = {
   loginContainer: document.getElementById("login-container"),
   videosContainer: document.getElementById("videos-container"),
   adminContainer: document.getElementById("admin-container"),
-  addVideoForm: document.getElementById("admin-form"),
+  addVideoForm: document.getElementById("add-video-form"),
   adminMessage: document.getElementById("admin-message"),
+  loginMessage: document.getElementById("login-message"),
   logoutBtn: document.getElementById("logout-btn"),
   loginForm: document.getElementById("login-form"),
   loading: document.getElementById("loading"),
@@ -28,35 +29,19 @@ function usernameToEmail(username) {
   return username.trim().toLowerCase() + "@vat.in";
 }
 
-function showContainer(containerName) {
+function showContainer(name) {
   DOM.loginContainer.style.display = "none";
   DOM.videosContainer.style.display = "none";
   DOM.adminContainer.style.display = "none";
 
-  if (containerName === "login") DOM.loginContainer.style.display = "block";
-  else if (containerName === "videos") DOM.videosContainer.style.display = "block";
-  else if (containerName === "admin") DOM.adminContainer.style.display = "block";
-}
-
-if (DOM.loginForm) {
-  DOM.loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-    try {
-      await auth.signInWithEmailAndPassword(usernameToEmail(username), password);
-      DOM.loginForm.reset();
-    } catch (err) {
-      alert("Login failed: " + err.message);
-      console.error(err);
-    }
-  });
+  if (name === "login") DOM.loginContainer.style.display = "block";
+  if (name === "videos") DOM.videosContainer.style.display = "block";
+  if (name === "admin") DOM.adminContainer.style.display = "block";
 }
 
 async function loadVideos() {
   if (!DOM.videoList) return;
   DOM.videoList.innerHTML = "";
-
   try {
     const snapshot = await db.collection("videos").get();
     snapshot.forEach(doc => {
@@ -78,50 +63,97 @@ async function loadVideos() {
   }
 }
 
-if (DOM.addVideoForm) {
-  DOM.addVideoForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const title = document.getElementById("video-title").value.trim();
-    const url = document.getElementById("video-url").value.trim();
-    if (!title || !url) return;
-
-    try {
-      await db.collection("videos").add({ title, url });
-      if (DOM.adminMessage) DOM.adminMessage.textContent = "Video added successfully!";
-      DOM.addVideoForm.reset();
-      loadVideos();
-    } catch (err) {
-      if (DOM.adminMessage) DOM.adminMessage.textContent = "Error adding video: " + err.message;
-      console.error(err);
-    }
-  });
+function showLoading() {
+  if (DOM.loading) DOM.loading.style.display = "flex";
 }
 
-if (DOM.logoutBtn) {
-  DOM.logoutBtn.addEventListener("click", async () => {
-    try {
-      await auth.signOut();
-    } catch (err) {
-      console.error("Logout error:", err);
-    }
-  });
-}
-
-auth.onAuthStateChanged(async (user) => {
+function hideLoading() {
   if (DOM.loading) DOM.loading.style.display = "none";
+}
 
+// LOGIN
+DOM.loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  showLoading();
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!username || !password) {
+    DOM.loginMessage.textContent = "Enter both username and password!";
+    DOM.adminMessage.classList.remove("success");
+    hideLoading();
+    return;
+  }
+
+  try {
+    await auth.signInWithEmailAndPassword(usernameToEmail(username), password);
+    DOM.loginForm.reset();
+    DOM.adminMessage.textContent = "";
+    DOM.loginMessage.textContent = "";
+  } catch (err) {
+    DOM.adminMessage.textContent = "Login failed: " + err.message;
+    DOM.adminMessage.classList.remove("success");
+  } finally {
+    hideLoading();
+  }
+});
+
+// ADD VIDEO
+DOM.addVideoForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const title = document.getElementById("video-title").value.trim();
+  const url = document.getElementById("video-url").value.trim();
+
+  if (!title || !url) {
+    DOM.adminMessage.textContent = "Enter both the title and URL!";
+    DOM.adminMessage.classList.remove("success");
+    return;
+  }
+
+  showLoading();
+  try {
+    await db.collection("videos").add({ title, url });
+    DOM.adminMessage.textContent = "Video added successfully!";
+    DOM.adminMessage.classList.add("success");
+    DOM.addVideoForm.reset();
+    await loadVideos();
+  } catch (err) {
+    DOM.adminMessage.textContent = "Error adding video: " + err.message;
+    DOM.adminMessage.classList.remove("success");
+  } finally {
+    hideLoading();
+  }
+});
+
+// LOGOUT
+DOM.logoutBtn.addEventListener("click", async () => {
+  showLoading();
+  try {
+    await auth.signOut();
+  } catch (err) {
+    console.error("Logout error:", err);
+  } finally {
+    hideLoading();
+  }
+});
+
+// AUTH STATE
+auth.onAuthStateChanged(async (user) => {
+  hideLoading();
   if (user) {
-    const email = user.email.toLowerCase();
-    if (email === "shitshow@vat.in") {
+    const token = await user.getIdTokenResult();
+
+    if (token.claims.admin) {
       showContainer("admin");
       DOM.videosContainer.style.display = "block";
     } else {
       showContainer("videos");
     }
+
     loadVideos();
-    if (DOM.logoutBtn) DOM.logoutBtn.style.display = "block";
+    DOM.logoutBtn.style.display = "block";
   } else {
     showContainer("login");
-    if (DOM.logoutBtn) DOM.logoutBtn.style.display = "none";
+    DOM.logoutBtn.style.display = "none";
   }
 });
