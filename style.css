@@ -166,10 +166,21 @@ h1 {
   font-size: 1rem;
   font-weight: 900;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.5s ease, max-height 0.5s ease;
 }
 
 .message.success {
   color: #6fefc7;
+}
+
+.video-table .list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  transition: transform 0.3s ease;
 }
 
 .video-table {
@@ -178,12 +189,6 @@ h1 {
   border-radius: 1rem;
   padding: 1rem;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-}
-
-.video-table .list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
 }
 
 #logout-container {
