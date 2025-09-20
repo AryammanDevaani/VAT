@@ -42,8 +42,11 @@ function showContainer(name) {
 async function loadVideos() {
   if (!DOM.videoList) return;
   DOM.videoList.innerHTML = "";
+  DOM.videoList.style.counterReset = "video";
+
   try {
     const snapshot = await db.collection("videos").get();
+
     snapshot.forEach(doc => {
       const { title, url } = doc.data();
       const item = document.createElement("a");
