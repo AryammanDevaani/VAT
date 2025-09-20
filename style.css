@@ -13,7 +13,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
+  font-family: 'SF Pro', 'Inter', sans-serif;
 }
 
 body {
@@ -43,7 +43,7 @@ h1 {
 
 .list {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
 }
 
@@ -66,6 +66,7 @@ h1 {
 .thumbnail {
   background: var(--thumbnail-bg);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 180px;
@@ -76,24 +77,23 @@ h1 {
   color: white;
   position: relative;
   transition: background 0.3s ease;
+  border-radius: 0.75rem;
 }
 
 .thumbnail:hover {
   background: #111827;
 }
 
-.thumbnail::before {
-  content: counter(video);
-  counter-increment: video;
+.order-number {
   position: absolute;
   top: 8px;
-  left: 12px;
-  font-size: 1rem;
-  background: rgba(255, 255, 255, 0.15);
-  color: var(--text-color);
+  left: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
   padding: 2px 6px;
   border-radius: 4px;
   font-weight: bold;
+  font-size: 0.9rem;
 }
 
 .card-container {

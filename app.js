@@ -53,8 +53,10 @@ async function loadVideos() {
 
   try {
     const snapshot = await db.collection("videos").orderBy("order").get();
+
     snapshot.forEach(doc => {
-      const { title, url } = doc.data();
+      const { title, url, order } = doc.data();
+
       const item = document.createElement("a");
       item.className = "item";
       item.href = url;
@@ -62,12 +64,21 @@ async function loadVideos() {
 
       const thumbnail = document.createElement("div");
       thumbnail.className = "thumbnail";
-      thumbnail.textContent = title;
+
+      const orderBadge = document.createElement("div");
+      orderBadge.className = "order-number";
+      orderBadge.textContent = order;
+
+      const titleText = document.createElement("div");
+      titleText.textContent = title;
+
+      thumbnail.appendChild(orderBadge);
+      thumbnail.appendChild(titleText);
       item.appendChild(thumbnail);
       DOM.videoList.appendChild(item);
     });
   } catch (err) {
-    console.error("error loading videos!", err);
+    console.error("Error loading videos:", err);
   }
 }
 
@@ -155,7 +166,7 @@ DOM.logoutBtn.addEventListener("click", async () => {
   } finally {
     hideLoading();
   }
-});-
+});
 
 auth.onAuthStateChanged(async (user) => {
   hideLoading();
