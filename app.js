@@ -59,7 +59,7 @@ async function loadVideos() {
       DOM.videoList.appendChild(item);
     });
   } catch (err) {
-    console.error("Error loading videos:", err);
+    console.error("error loading videos!");
   }
 }
 
@@ -79,7 +79,7 @@ DOM.loginForm.addEventListener("submit", async (e) => {
   const password = document.getElementById("password").value.trim();
 
   if (!username || !password) {
-    DOM.loginMessage.textContent = "Enter both username and password!";
+    DOM.loginMessage.textContent = "enter both username and password!";
     DOM.adminMessage.classList.remove("success");
     hideLoading();
     return;
@@ -91,7 +91,7 @@ DOM.loginForm.addEventListener("submit", async (e) => {
     DOM.adminMessage.textContent = "";
     DOM.loginMessage.textContent = "";
   } catch (err) {
-    DOM.adminMessage.textContent = "Login failed: " + err.message;
+    DOM.adminMessage.textContent = "login failed!";
     DOM.adminMessage.classList.remove("success");
   } finally {
     hideLoading();
@@ -105,7 +105,7 @@ DOM.addVideoForm.addEventListener("submit", async (e) => {
   const url = document.getElementById("video-url").value.trim();
 
   if (!title || !url) {
-    DOM.adminMessage.textContent = "Enter both the title and URL!";
+    DOM.adminMessage.textContent = "enter both the title and URL!";
     DOM.adminMessage.classList.remove("success");
     return;
   }
@@ -113,12 +113,12 @@ DOM.addVideoForm.addEventListener("submit", async (e) => {
   showLoading();
   try {
     await db.collection("videos").add({ title, url });
-    DOM.adminMessage.textContent = "Video added successfully!";
+    DOM.adminMessage.textContent = "video added successfully!";
     DOM.adminMessage.classList.add("success");
     DOM.addVideoForm.reset();
     await loadVideos();
   } catch (err) {
-    DOM.adminMessage.textContent = "Error adding video: " + err.message;
+    DOM.adminMessage.textContent = "error adding video!";
     DOM.adminMessage.classList.remove("success");
   } finally {
     hideLoading();
@@ -131,7 +131,7 @@ DOM.logoutBtn.addEventListener("click", async () => {
   try {
     await auth.signOut();
   } catch (err) {
-    console.error("Logout error:", err);
+    console.error("logout error!");
   } finally {
     hideLoading();
   }
