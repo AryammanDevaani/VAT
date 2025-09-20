@@ -39,14 +39,20 @@ function showContainer(name) {
   if (name === "admin") DOM.adminContainer.style.display = "block";
 }
 
+function showLoading() {
+  if (DOM.loading) DOM.loading.style.display = "flex";
+}
+
+function hideLoading() {
+  if (DOM.loading) DOM.loading.style.display = "none";
+}
+
 async function loadVideos() {
   if (!DOM.videoList) return;
   DOM.videoList.innerHTML = "";
-  DOM.videoList.style.counterReset = "video";
 
   try {
-    const snapshot = await db.collection("videos").get();
-
+    const snapshot = await db.collection("videos").orderBy("order").get();
     snapshot.forEach(doc => {
       const { title, url } = doc.data();
       const item = document.createElement("a");
@@ -57,24 +63,37 @@ async function loadVideos() {
       const thumbnail = document.createElement("div");
       thumbnail.className = "thumbnail";
       thumbnail.textContent = title;
-
       item.appendChild(thumbnail);
       DOM.videoList.appendChild(item);
     });
   } catch (err) {
-    console.error("error loading videos!");
+    console.error("error loading videos!", err);
   }
 }
 
-function showLoading() {
-  if (DOM.loading) DOM.loading.style.display = "flex";
+async function addVideo(title, url, position = null) {
+  const videosRef = db.collection("videos");
+  const snapshot = await videosRef.orderBy("order").get();
+  const videos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+  let newOrder;
+
+  if (position === null || position > videos.length) {
+    newOrder = videos.length + 1;
+  } else {
+    newOrder = position;
+    const batch = db.batch();
+    videos.forEach(video => {
+      if (video.order >= position) {
+        batch.update(videosRef.doc(video.id), { order: video.order + 1 });
+      }
+    });
+    await batch.commit();
+  }
+
+  await videosRef.add({ title, url, order: newOrder });
 }
 
-function hideLoading() {
-  if (DOM.loading) DOM.loading.style.display = "none";
-}
-
-// LOGIN
 DOM.loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   showLoading();
@@ -93,7 +112,7 @@ DOM.loginForm.addEventListener("submit", async (e) => {
     DOM.loginForm.reset();
     DOM.adminMessage.textContent = "";
     DOM.loginMessage.textContent = "";
-  } catch (err) {
+  } catch {
     DOM.adminMessage.textContent = "login failed!";
     DOM.adminMessage.classList.remove("success");
   } finally {
@@ -101,7 +120,6 @@ DOM.loginForm.addEventListener("submit", async (e) => {
   }
 });
 
-// ADD VIDEO
 DOM.addVideoForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const title = document.getElementById("video-title").value.trim();
@@ -115,12 +133,12 @@ DOM.addVideoForm.addEventListener("submit", async (e) => {
 
   showLoading();
   try {
-    await db.collection("videos").add({ title, url });
+    await addVideo(title, url);
     DOM.adminMessage.textContent = "video added successfully!";
     DOM.adminMessage.classList.add("success");
     DOM.addVideoForm.reset();
     await loadVideos();
-  } catch (err) {
+  } catch {
     DOM.adminMessage.textContent = "error adding video!";
     DOM.adminMessage.classList.remove("success");
   } finally {
@@ -128,19 +146,17 @@ DOM.addVideoForm.addEventListener("submit", async (e) => {
   }
 });
 
-// LOGOUT
 DOM.logoutBtn.addEventListener("click", async () => {
   showLoading();
   try {
     await auth.signOut();
-  } catch (err) {
+  } catch {
     console.error("logout error!");
   } finally {
     hideLoading();
   }
-});
+});-
 
-// AUTH STATE
 auth.onAuthStateChanged(async (user) => {
   hideLoading();
   if (user) {
