@@ -15,7 +15,6 @@
   --hover-transform: translateY(-6px) scale(1.02);
 }
 
-/* Reset & Base */
 * {
   margin: 0;
   padding: 0;
@@ -30,7 +29,6 @@ body {
   font-size: 1.2rem;
 }
 
-/* Layout */
 .container {
   max-width: 1000px;
   margin: auto;
@@ -57,7 +55,6 @@ body {
   font-weight: bold;
 }
 
-/* Typography */
 h1 {
   font-size: 4rem;
   font-weight: 900;
@@ -79,7 +76,6 @@ h1 {
   font-size: 2rem;
 }
 
-/* Card Components */
 .card-container {
   max-width: 400px;
   margin: 5vh auto;
@@ -95,7 +91,6 @@ h1 {
   display: none;
 }
 
-/* Form Elements */
 .card-container input {
   width: 100%;
   padding: 0.9rem;
@@ -133,7 +128,6 @@ h1 {
   box-shadow: 0 16px 28px rgba(0, 0, 0, 0.5);
 }
 
-/* Video Grid */
 .list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -202,7 +196,6 @@ h1 {
   font-size: 0.9rem;
 }
 
-/* Messages */
 .message {
   color: var(--error-color);
   margin-top: 35px;
@@ -219,7 +212,6 @@ h1 {
   color: var(--success-color);
 }
 
-/* Logout */
 #logout-container {
   display: flex;
   justify-content: flex-end;
@@ -254,7 +246,6 @@ h1 {
   transform: scale(1.05);
 }
 
-/* Responsive Design */
 @media (max-width: 1024px) {
   h1 {
     font-size: 3.5rem;

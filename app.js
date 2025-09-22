@@ -1,4 +1,3 @@
-// Firebase Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCGecLDtzjqcnNnedy6EVpsKJ2SZ6sNZEc",
   authDomain: "vachanaryammantirth.firebaseapp.com",
@@ -9,12 +8,10 @@ const firebaseConfig = {
   measurementId: "G-4G8SRM2RT6"
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// DOM Elements
 const DOM = {
   loginContainer: document.getElementById("login-container"),
   videosContainer: document.getElementById("videos-container"),
@@ -28,10 +25,8 @@ const DOM = {
   videoList: document.querySelector(".list")
 };
 
-// State Management
 let messageTimeout;
 
-// Utility Functions
 function usernameToEmail(username) {
   return username.trim().toLowerCase() + "@vat.in";
 }
@@ -60,11 +55,9 @@ function showMessage(element, message, isSuccess = false, duration = 3000) {
 }
 
 function showContainer(containerName) {
-  // Hide all containers
   [DOM.loginContainer, DOM.videosContainer, DOM.adminContainer]
     .forEach(container => container.style.display = "none");
   
-  // Show specific container
   if (containerName === "login") DOM.loginContainer.style.display = "block";
   if (containerName === "videos") DOM.videosContainer.style.display = "block";
   if (containerName === "admin") DOM.adminContainer.style.display = "block";
@@ -78,7 +71,6 @@ function hideLoading() {
   if (DOM.loading) DOM.loading.style.display = "none";
 }
 
-// Video Management
 async function loadVideos() {
   if (!DOM.videoList) return;
   
@@ -133,7 +125,6 @@ async function addVideo(title, url, position = null) {
     newOrder = videos.length + 1;
   } else {
     newOrder = position;
-    // Update existing orders
     const batch = db.batch();
     videos.forEach(video => {
       if (video.order >= position) {
@@ -146,9 +137,7 @@ async function addVideo(title, url, position = null) {
   await videosRef.add({ title, url, order: newOrder });
 }
 
-// Event Listeners
 function setupEventListeners() {
-  // Login Form
   DOM.loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     showLoading();
@@ -174,7 +163,6 @@ function setupEventListeners() {
     }
   });
 
-  // Add Video Form
   DOM.addVideoForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     
@@ -199,7 +187,6 @@ function setupEventListeners() {
     }
   });
 
-  // Logout Button
   DOM.logoutBtn.addEventListener("click", async () => {
     showLoading();
     try {
@@ -212,7 +199,6 @@ function setupEventListeners() {
   });
 }
 
-// Authentication Handler
 auth.onAuthStateChanged(async (user) => {
   hideLoading();
   
@@ -234,5 +220,4 @@ auth.onAuthStateChanged(async (user) => {
   }
 });
 
-// Initialize App
 setupEventListeners();

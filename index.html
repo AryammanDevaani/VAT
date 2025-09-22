@@ -5,20 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VAT</title>
   
-  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
   
-  <!-- Fonts -->
   <link rel="stylesheet" href="https://developer.apple.com/fonts/sf-pro.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- Styles -->
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" href="style.css">
   
-  <!-- Security -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
     script-src 'self' https://www.gstatic.com;
@@ -31,15 +27,12 @@
 </head>
 
 <body>
-  <!-- Header -->
   <h1>VAT</h1>
   
-  <!-- Loading State -->
   <div id="loading">
     <p style="color:#6fefc7; font-weight:bold;">...</p>
   </div>
 
-  <!-- Authentication -->
   <div id="login-container" class="card-container">
     <h2>login</h2>
     <form id="login-form">
@@ -50,7 +43,6 @@
     <p class="message" id="login-message"></p>
   </div>
 
-  <!-- Admin Panel -->
   <div id="admin-container" class="card-container">
     <h2>add a new video</h2>
     <form id="add-video-form">
@@ -61,7 +53,6 @@
     <p class="message" id="admin-message"></p>
   </div>
 
-  <!-- Video Dashboard -->
   <div id="videos-container">
     <div id="logout-container">
       <button id="logout-btn">logout</button>
@@ -69,7 +60,6 @@
     <div class="list" id="video-list"></div>
   </div>
 
-  <!-- App Logic -->
   <script src="app.js"></script>
 </body>
 </html>
