@@ -1,14 +1,21 @@
 :root {
+  /* Colors */
   --bg-color: #0d1117;
   --container-bg: #161b22;
   --text-color: #c9d1d9;
   --accent-color: #21262d;
   --link-color: #6fefc7;
   --thumbnail-bg: #1f2937;
+  --success-color: #6fefc7;
+  --error-color: #ff3b3b;
+  --hover-dark: #111827;
+  
+  /* Effects */
   --hover-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
   --hover-transform: translateY(-6px) scale(1.02);
 }
 
+/* Reset & Base */
 * {
   margin: 0;
   padding: 0;
@@ -23,6 +30,7 @@ body {
   font-size: 1.2rem;
 }
 
+/* Layout */
 .container {
   max-width: 1000px;
   margin: auto;
@@ -32,6 +40,24 @@ body {
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
+#loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  font-size: 1.5rem;
+  color: var(--success-color);
+  font-weight: bold;
+}
+
+/* Typography */
 h1 {
   font-size: 4rem;
   font-weight: 900;
@@ -41,10 +67,90 @@ h1 {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
+.card-container h2 {
+  color: var(--success-color);
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  font-weight: 900;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+#login-container h2 {
+  font-size: 2rem;
+}
+
+/* Card Components */
+.card-container {
+  max-width: 400px;
+  margin: 5vh auto;
+  background: var(--accent-color);
+  padding: 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  text-align: center;
+}
+
+#admin-container {
+  margin: 3rem auto;
+  display: none;
+}
+
+/* Form Elements */
+.card-container input {
+  width: 100%;
+  padding: 0.9rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0.6rem;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: var(--thumbnail-bg);
+  color: var(--text-color);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.card-container input:focus {
+  background: var(--hover-dark);
+  transform: scale(1.02);
+}
+
+.card-container button {
+  width: 100%;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 0.7rem;
+  background: linear-gradient(135deg, var(--success-color), #2dd1a7);
+  color: var(--bg-color);
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.card-container button:hover {
+  transform: translateY(0px) scale(1);
+  box-shadow: 0 16px 28px rgba(0, 0, 0, 0.5);
+}
+
+/* Video Grid */
 .list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
+}
+
+.video-table .list {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  transition: transform 0.3s ease;
+}
+
+.video-table {
+  background: var(--container-bg);
+  border: 2px solid #2d3748;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
 }
 
 .item {
@@ -81,7 +187,7 @@ h1 {
 }
 
 .thumbnail:hover {
-  background: #111827;
+  background: var(--hover-dark);
 }
 
 .order-number {
@@ -96,72 +202,9 @@ h1 {
   font-size: 0.9rem;
 }
 
-.card-container {
-  max-width: 400px;
-  margin: 5vh auto;
-  background: #21262d;
-  padding: 2.5rem;
-  border-radius: 1rem;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-  text-align: center;
-}
-
-.card-container h2 {
-  color: #6fefc7;
-  font-size: 1.8rem;
-  margin-bottom: 2rem;
-  font-weight: 900;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.card-container input {
-  width: 100%;
-  padding: 0.9rem;
-  margin-bottom: 1.5rem;
-  border-radius: 0.6rem;
-  border: none;
-  outline: none;
-  font-size: 1rem;
-  background: #1f2937;
-  color: #c9d1d9;
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.card-container input:focus {
-  background: #111827;
-  transform: scale(1.02);
-}
-
-.card-container button {
-  width: 100%;
-  padding: 0.9rem;
-  border: none;
-  border-radius: 0.7rem;
-  background: linear-gradient(135deg, #6fefc7, #2dd1a7);
-  color: #0d1117;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-}
-
-.card-container button:hover {
-  transform: translateY(0px) scale(1);
-  box-shadow: 0 16px 28px rgba(0, 0, 0, 0.5);
-}
-
-#login-container h2 {
-  font-size: 2rem;
-}
-
-#admin-container {
-  margin: 3rem auto;
-  display: none;
-}
-
+/* Messages */
 .message {
-  color: #ff3b3b;
+  color: var(--error-color);
   margin-top: 35px;
   font-size: 1rem;
   font-weight: 900;
@@ -173,24 +216,10 @@ h1 {
 }
 
 .message.success {
-  color: #6fefc7;
+  color: var(--success-color);
 }
 
-.video-table .list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-  transition: transform 0.3s ease;
-}
-
-.video-table {
-  background: #161b22;
-  border: 2px solid #2d3748;
-  border-radius: 1rem;
-  padding: 1rem;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-}
-
+/* Logout */
 #logout-container {
   display: flex;
   justify-content: flex-end;
@@ -201,8 +230,8 @@ h1 {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 0.6rem;
-  background: linear-gradient(135deg, #6fefc7, #2dd1a7);
-  color: #0d1117;
+  background: linear-gradient(135deg, var(--success-color), #2dd1a7);
+  color: var(--bg-color);
   font-weight: bold;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -225,34 +254,12 @@ h1 {
   transform: scale(1.05);
 }
 
-#login-container,
-#admin-container,
-#videos-container {
-  display: none;
-}
-
-#loading {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  font-size: 1.5rem;
-  color: #6fefc7;
-  font-weight: bold;
-}
-
+/* Responsive Design */
 @media (max-width: 1024px) {
   h1 {
     font-size: 3.5rem;
   }
-
+  
   .thumbnail {
     height: 150px;
     font-size: 1.2rem;
@@ -263,7 +270,7 @@ h1 {
   h1 {
     font-size: 3rem;
   }
-
+  
   .thumbnail {
     height: 140px;
     font-size: 1.1rem;
@@ -272,25 +279,29 @@ h1 {
 }
 
 @media (max-width: 480px) {
+  body {
+    padding: 1rem;
+  }
+  
   .container {
     padding: 1rem;
   }
-
+  
   h1 {
     font-size: 2.5rem;
   }
-
+  
   .thumbnail {
     height: 120px;
     font-size: 1rem;
     padding: 0.5rem;
   }
-
-  #admin-container input,
-  #admin-container button {
+  
+  .card-container input,
+  .card-container button {
     width: 100%;
   }
-
+  
   .list {
     gap: 0.8rem;
   }
