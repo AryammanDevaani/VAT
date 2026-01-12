@@ -57,7 +57,16 @@ h2 {
   border: 2px solid var(--ink-color);
   box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.15);
 }
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
+}
 
+/* Hide scrollbar for IE, Edge and Firefox */
+html, body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
 #admin-container,
 #videos-container {
   display: none;
