@@ -200,24 +200,32 @@ function setupEventListeners() {
 }
 
 auth.onAuthStateChanged(async (user) => {
-  hideLoading();
-  
-  if (user) {
-    const token = await user.getIdTokenResult();
-    
-    if (token.claims.admin) {
-      showContainer("admin");
-      DOM.videosContainer.style.display = "block";
-    } else {
-      showContainer("videos");
-    }
-    
-    loadVideos();
-    DOM.logoutBtn.style.display = "block";
-  } else {
-    showContainer("login");
-    DOM.logoutBtn.style.display = "none";
+  const progressBar = document.querySelector(".progress-bar");
+  if (progressBar) {
+    progressBar.classList.add("complete");
   }
+
+  // 500ms for transition + 500ms delay = 1000ms total
+  setTimeout(async () => {
+    hideLoading();
+    
+    if (user) {
+      const token = await user.getIdTokenResult();
+      
+      if (token.claims.admin) {
+        showContainer("admin");
+        DOM.videosContainer.style.display = "block";
+      } else {
+        showContainer("videos");
+      }
+      
+      loadVideos();
+      DOM.logoutBtn.style.display = "block";
+    } else {
+      showContainer("login");
+      DOM.logoutBtn.style.display = "none";
+    }
+  }, 1000);
 });
 
 setupEventListeners();

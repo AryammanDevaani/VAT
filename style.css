@@ -37,18 +37,6 @@ h1 {
   padding: 0 1rem 0.5rem 1rem;
 }
 
-h2 {
-  font-size: 1.2rem;
-  text-align: center;
-  margin-bottom: 1.5rem;
-  text-transform: uppercase;
-  background: var(--ink-color);
-  color: var(--bg-color);
-  display: inline-block;
-  padding: 0.4rem 0.8rem;
-  font-weight: bold;
-}
-
 .card-container {
   max-width: 450px;
   margin: 3rem auto;
@@ -152,22 +140,64 @@ button:hover {
   font-family: var(--font-stack);
 }
 
+/* --- Retro Progress Bar Loading Screen --- */
+
 #loading {
   position: fixed;
   inset: 0;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-color);
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: var(--ink-color);
-  text-transform: uppercase;
+  gap: 1.5rem;
+  background-image: 
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 25px 25px;
 }
 
 #loading p {
+  font-weight: bold;
+  letter-spacing: 2px;
+  font-family: var(--font-stack);
+  color: var(--ink-color);
   animation: blink 1s infinite;
+}
+
+.progress-bar {
+  width: 240px;
+  height: 30px;
+  border: 2px solid var(--ink-color);
+  padding: 2px;
+  position: relative;
+  box-shadow: 6px 6px 0 var(--ink-color);
+  background: #fff;
+}
+
+.progress-bar::after {
+  content: "";
+  display: block;
+  height: 100%;
+  background: var(--ink-color);
+  width: 0%;
+  /* Trickle animation: Move to 90% and wait */
+  animation: trickle 10s ease-out forwards; 
+  transition: width 0.5s ease-out; 
+}
+
+/* JS adds this class when data is ready to force 100% */
+.progress-bar.complete::after {
+  width: 100% !important;
+  animation: none;
+}
+
+@keyframes trickle {
+  0% { width: 0%; }
+  20% { width: 40%; }
+  50% { width: 70%; }
+  100% { width: 90%; }
 }
 
 @keyframes blink {
