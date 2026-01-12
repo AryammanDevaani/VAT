@@ -26,6 +26,8 @@ const DOM = {
 };
 
 let messageTimeout;
+// 1. Track when the loading started (Page Load)
+let loadingStartTime = Date.now(); 
 
 function usernameToEmail(username) {
   return username.trim().toLowerCase() + "@vat.in";
@@ -64,7 +66,11 @@ function showContainer(containerName) {
 }
 
 function showLoading() {
-  if (DOM.loading) DOM.loading.style.display = "flex";
+  if (DOM.loading) {
+    DOM.loading.style.display = "flex";
+    // 2. Reset timer if we show loading manually (e.g., on login click)
+    loadingStartTime = Date.now(); 
+  }
 }
 
 function hideLoading() {
@@ -198,11 +204,15 @@ function setupEventListeners() {
   });
 }
 
-// -- MODIFIED AUTH LISTENER --
+// -- UPDATED AUTH LISTENER --
 auth.onAuthStateChanged(async (user) => {
-  // 1. Start the timer immediately
-  const minLoadingTime = new Promise(resolve => setTimeout(resolve, 2000));
+  // 3. Calculate how much time has ALREADY passed since loading started
+  const elapsed = Date.now() - loadingStartTime;
+  const remainingTime = Math.max(0, 2000 - elapsed);
   
+  // 4. Create a promise that waits only for the remaining time
+  const minLoadingWait = new Promise(resolve => setTimeout(resolve, remainingTime));
+
   if (user) {
     const token = await user.getIdTokenResult();
     
@@ -220,9 +230,9 @@ auth.onAuthStateChanged(async (user) => {
     DOM.logoutBtn.style.display = "none";
   }
   
-  // 2. Wait for the 2 seconds to finish before hiding the loading screen
-  await minLoadingTime;
-  hideLoading(); 
+  // 5. Wait for the remainder (if any) so the total time is exactly 2 seconds
+  await minLoadingWait;
+  hideLoading();
 });
 
 setupEventListeners();
