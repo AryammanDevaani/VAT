@@ -66,7 +66,9 @@ h2 {
   box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.15); 
 }
 
-#admin-container {
+/* FIX: Hide these containers by default so they don't flash on load */
+#admin-container, 
+#videos-container {
   display: none;
 }
 
@@ -214,6 +216,8 @@ button:hover {
 }
 
 #logout-btn {
+  /* FIX: Hide button by default */
+  display: none;
   width: auto;
   padding: 0.5rem 2rem;
   background: transparent;
