@@ -155,23 +155,42 @@ button:hover {
 #loading {
   position: fixed;
   inset: 0;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-color);
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: var(--ink-color);
-  text-transform: uppercase;
+  gap: 1rem;
 }
 
 #loading p {
-  animation: blink 1s infinite;
+  font-weight: bold;
+  letter-spacing: 2px;
 }
 
-@keyframes blink {
-  50% { opacity: 0; }
+.progress-bar {
+  width: 200px;
+  height: 24px;
+  border: 2px solid var(--ink-color);
+  background: transparent;
+  position: relative;
+  box-shadow: 4px 4px 0 var(--ink-color);
+}
+
+.progress-bar::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  bottom: 2px;
+  background: var(--ink-color);
+  animation: fillBar 2s steps(10) infinite;
+}
+
+@keyframes fillBar {
+  0% { width: 0%; }
+  100% { width: calc(100% - 4px); }
 }
 
 .message {
