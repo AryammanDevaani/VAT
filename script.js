@@ -158,7 +158,6 @@ function setupEventListeners() {
       DOM.loginMessage.textContent = "";
     } catch (error) {
       showMessage(DOM.loginMessage, "Login failed!");
-    } finally {
       hideLoading();
     }
   });
@@ -199,8 +198,10 @@ function setupEventListeners() {
   });
 }
 
+// -- MODIFIED AUTH LISTENER --
 auth.onAuthStateChanged(async (user) => {
-  hideLoading();
+  // 1. Start the timer immediately
+  const minLoadingTime = new Promise(resolve => setTimeout(resolve, 2000));
   
   if (user) {
     const token = await user.getIdTokenResult();
@@ -212,12 +213,16 @@ auth.onAuthStateChanged(async (user) => {
       showContainer("videos");
     }
     
-    loadVideos();
+    await loadVideos();
     DOM.logoutBtn.style.display = "block";
   } else {
     showContainer("login");
     DOM.logoutBtn.style.display = "none";
   }
+  
+  // 2. Wait for the 2 seconds to finish before hiding the loading screen
+  await minLoadingTime;
+  hideLoading(); 
 });
 
 setupEventListeners();
