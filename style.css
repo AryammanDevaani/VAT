@@ -1,8 +1,7 @@
 :root {
-  /* Fax Machine Palette */
-  --bg-color: #fcfcfc;       /* Clean paper white */
-  --ink-color: #111111;      /* Deep black ink */
-  --grid-color: #e5e5e5;     /* Faint grid lines */
+  --bg-color: #fcfcfc;
+  --ink-color: #111111;
+  --grid-color: #e5e5e5;
   --font-stack: 'Courier New', Courier, 'Lucida Sans Typewriter', monospace;
 }
 
@@ -18,15 +17,12 @@ body {
   color: var(--ink-color);
   padding: 2rem;
   min-height: 100vh;
-  /* Subtle grid background to mimic engineering/fax paper */
-  background-image: 
+  background-image:
     linear-gradient(var(--grid-color) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
   background-size: 25px 25px;
   background-position: center top;
 }
-
-/* --- Typography (Typewriter Style) --- */
 
 h1 {
   font-size: 3.5rem;
@@ -35,7 +31,7 @@ h1 {
   margin-bottom: 3rem;
   text-transform: uppercase;
   letter-spacing: -3px;
-  /* Double underline looks like a stamped header */
+  border-bottom: 4px double var(--ink-color);
   display: table;
   margin-left: auto;
   margin-right: auto;
@@ -54,25 +50,19 @@ h2 {
   font-weight: bold;
 }
 
-/* --- Containers (The "Paper" Cards) --- */
-
 .card-container {
   max-width: 450px;
   margin: 3rem auto;
   padding: 2.5rem;
   background: #fff;
   border: 2px solid var(--ink-color);
-  /* Hard shadow to make it look like a cut-out piece of paper */
-  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.15); 
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.15);
 }
 
-/* FIX: Hide these containers by default so they don't flash on load */
-#admin-container, 
+#admin-container,
 #videos-container {
   display: none;
 }
-
-/* --- Forms (Fill-in-the-blanks style) --- */
 
 input {
   width: 100%;
@@ -80,8 +70,7 @@ input {
   margin-bottom: 1.5rem;
   background: transparent;
   border: none;
-  /* Only bottom border to look like a line to write on */
-  border-bottom: 2px solid var(--ink-color); 
+  border-bottom: 2px solid var(--ink-color);
   color: var(--ink-color);
   font-size: 1.1rem;
   font-family: inherit;
@@ -90,8 +79,7 @@ input {
 }
 
 input:focus {
-  /* Dashed line when active (retro feel) */
-  border-bottom-style: dashed; 
+  border-bottom-style: dashed;
 }
 
 input::placeholder {
@@ -122,8 +110,6 @@ button:hover {
   transform: translate(-2px, -2px);
 }
 
-/* --- Video List Grid --- */
-
 .list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -143,8 +129,7 @@ button:hover {
 
 .item:hover {
   transform: translateY(-4px);
-  /* Hard ink shadow */
-  box-shadow: 8px 8px 0 var(--ink-color); 
+  box-shadow: 8px 8px 0 var(--ink-color);
 }
 
 .thumbnail {
@@ -168,8 +153,6 @@ button:hover {
   font-family: var(--font-stack);
 }
 
-/* --- Utilities & Messages --- */
-
 #loading {
   position: fixed;
   inset: 0;
@@ -184,7 +167,6 @@ button:hover {
   text-transform: uppercase;
 }
 
-/* Blink animation for the loading text cursor effect */
 #loading p {
   animation: blink 1s infinite;
 }
@@ -205,8 +187,6 @@ button:hover {
   text-decoration: underline;
 }
 
-/* --- Logout Button --- */
-
 #logout-container {
   display: flex;
   justify-content: center;
@@ -216,7 +196,6 @@ button:hover {
 }
 
 #logout-btn {
-  /* FIX: Hide button by default */
   display: none;
   width: auto;
   padding: 0.5rem 2rem;
@@ -232,26 +211,25 @@ button:hover {
   transform: none;
 }
 
-/* --- Responsive --- */
-
 @media (max-width: 768px) {
   body {
     padding: 1rem;
     background-size: 20px 20px;
   }
-  
+
   h1 {
     font-size: 2.5rem;
     border-bottom-width: 3px;
   }
-  
+
   .list {
     grid-template-columns: 1fr;
   }
-  
+
   .card-container {
     width: 100%;
-    margin: 2rem 0;
+    max-width: 450px;
+    margin: 2rem auto;
     box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.15);
   }
 }
