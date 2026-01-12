@@ -31,7 +31,6 @@ h1 {
   margin-bottom: 3rem;
   text-transform: uppercase;
   letter-spacing: -3px;
-  border-bottom: 4px double var(--ink-color);
   display: table;
   margin-left: auto;
   margin-right: auto;
