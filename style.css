@@ -188,18 +188,29 @@ button:hover {
 }
 
 .progress-bar::after {
-  content: "";
+  content: none;
+  display: none;
+}
+
+.progress-fill {
   position: absolute;
   top: 2px;
   left: 2px;
   bottom: 2px;
   background: var(--ink-color);
-  animation: fillBar 2s steps(10) infinite;
+  width: 0%;
+  transition: width 0s; 
 }
 
-@keyframes fillBar {
-  0% { width: 0%; }
-  100% { width: calc(100% - 4px); }
+/* REMOVED 'width' from here. 
+   It is now handled by JS for the random percentage.
+*/
+.progress-fill.filling {
+  transition: width 2s linear;
+}
+
+.progress-fill.complete {
+  transition: width 0.3s ease-out;
 }
 
 .message {

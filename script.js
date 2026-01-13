@@ -22,12 +22,68 @@ const DOM = {
   logoutBtn: document.getElementById("logout-btn"),
   loginForm: document.getElementById("login-form"),
   loading: document.getElementById("loading"),
-  videoList: document.querySelector(".list")
+  videoList: document.querySelector(".list"),
+  progressBar: document.querySelector(".progress-bar")
 };
 
+// 1. SETUP: Create the fill element
+const progressFill = document.createElement("div");
+progressFill.className = "progress-fill";
+if (DOM.progressBar) {
+  DOM.progressBar.innerHTML = "";
+  DOM.progressBar.appendChild(progressFill);
+}
+
+let loadingStartTime = Date.now();
+let isFirstLoad = true;
+
+function startLoadingSequence() {
+  if (DOM.loading) {
+    DOM.loading.style.display = "flex";
+    
+    // Reset Bar State
+    progressFill.className = "progress-fill"; 
+    progressFill.style.width = "0%";
+    
+    loadingStartTime = Date.now();
+    
+    // Force Reflow
+    void progressFill.offsetWidth; 
+    
+    // Generate Random Percentage (between 60% and 90%)
+    // This ensures it looks like it's "mostly done" but varies every time.
+    const randomPercent = Math.floor(Math.random() * (90 - 30 + 1) + 30);
+
+    // Start Animation
+    requestAnimationFrame(() => {
+      progressFill.classList.add("filling");
+      // Apply the random width dynamically
+      progressFill.style.width = `calc(${randomPercent}% - 4px)`;
+    });
+  }
+}
+
+async function finishLoadingSequence() {
+  const elapsed = Date.now() - loadingStartTime;
+  const remaining = Math.max(0, 2000 - elapsed);
+  
+  if (remaining > 0) {
+    await new Promise(r => setTimeout(r, remaining));
+  }
+  
+  // Fill to 100%
+  progressFill.classList.remove("filling");
+  progressFill.classList.add("complete");
+  // Force width to 100% (overriding the random width)
+  progressFill.style.width = "calc(100% - 4px)";
+  
+  await new Promise(r => setTimeout(r, 300));
+  await new Promise(r => setTimeout(r, 500));
+  
+  if (DOM.loading) DOM.loading.style.display = "none";
+}
+
 let messageTimeout;
-// 1. Track when the loading started (Page Load)
-let loadingStartTime = Date.now(); 
 
 function usernameToEmail(username) {
   return username.trim().toLowerCase() + "@vat.in";
@@ -63,18 +119,6 @@ function showContainer(containerName) {
   if (containerName === "login") DOM.loginContainer.style.display = "block";
   if (containerName === "videos") DOM.videosContainer.style.display = "block";
   if (containerName === "admin") DOM.adminContainer.style.display = "block";
-}
-
-function showLoading() {
-  if (DOM.loading) {
-    DOM.loading.style.display = "flex";
-    // 2. Reset timer if we show loading manually (e.g., on login click)
-    loadingStartTime = Date.now(); 
-  }
-}
-
-function hideLoading() {
-  if (DOM.loading) DOM.loading.style.display = "none";
 }
 
 async function loadVideos() {
@@ -146,14 +190,12 @@ async function addVideo(title, url, position = null) {
 function setupEventListeners() {
   DOM.loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    showLoading();
     
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value.trim();
     
     if (!username || !password) {
       showMessage(DOM.loginMessage, "Enter both username and password!");
-      hideLoading();
       return;
     }
     
@@ -164,13 +206,11 @@ function setupEventListeners() {
       DOM.loginMessage.textContent = "";
     } catch (error) {
       showMessage(DOM.loginMessage, "Login failed!");
-      hideLoading();
     }
   });
 
   DOM.addVideoForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    
     const title = document.getElementById("video-title").value.trim();
     const url = document.getElementById("video-url").value.trim();
     
@@ -179,7 +219,8 @@ function setupEventListeners() {
       return;
     }
     
-    showLoading();
+    showMessage(DOM.adminMessage, "Adding video...", true);
+    
     try {
       await addVideo(title, url);
       showMessage(DOM.adminMessage, "Video added successfully!", true);
@@ -187,31 +228,28 @@ function setupEventListeners() {
       await loadVideos();
     } catch (error) {
       showMessage(DOM.adminMessage, "Error adding video!");
-    } finally {
-      hideLoading();
     }
   });
 
   DOM.logoutBtn.addEventListener("click", async () => {
-    showLoading();
     try {
       await auth.signOut();
     } catch (error) {
       console.error("Logout error:", error);
-    } finally {
-      hideLoading();
     }
   });
 }
 
-// -- UPDATED AUTH LISTENER --
+// 3. START: Trigger loading immediately on script load
+// This ensures the bar is moving before any Firebase logic runs.
+startLoadingSequence();
+
 auth.onAuthStateChanged(async (user) => {
-  // 3. Calculate how much time has ALREADY passed since loading started
-  const elapsed = Date.now() - loadingStartTime;
-  const remainingTime = Math.max(0, 2000 - elapsed);
-  
-  // 4. Create a promise that waits only for the remaining time
-  const minLoadingWait = new Promise(resolve => setTimeout(resolve, remainingTime));
+  // If this is NOT the first load (meaning it's a login), start the sequence again.
+  // (On first load, it is already started by the call above).
+  if (!isFirstLoad) {
+    startLoadingSequence();
+  }
 
   if (user) {
     const token = await user.getIdTokenResult();
@@ -230,9 +268,8 @@ auth.onAuthStateChanged(async (user) => {
     DOM.logoutBtn.style.display = "none";
   }
   
-  // 5. Wait for the remainder (if any) so the total time is exactly 2 seconds
-  await minLoadingWait;
-  hideLoading();
+  await finishLoadingSequence();
+  isFirstLoad = false;
 });
 
 setupEventListeners();
