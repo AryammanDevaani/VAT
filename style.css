@@ -218,8 +218,6 @@ button:hover {
   color: var(--ink-color);
   text-transform: lowercase;
   
-  /* UPDATED: Reserves space so Admin messages don't jump */
-  min-height: 1.5rem;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
