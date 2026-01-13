@@ -40,16 +40,16 @@ let isFirstLoad = true;
 function startLoadingSequence() {
   if (DOM.loading) {
     DOM.loading.style.display = "flex";
-    
+
     // Reset Bar State
-    progressFill.className = "progress-fill"; 
+    progressFill.className = "progress-fill";
     progressFill.style.width = "0%";
-    
+
     loadingStartTime = Date.now();
-    
+
     // Force Reflow
-    void progressFill.offsetWidth; 
-    
+    void progressFill.offsetWidth;
+
     // Generate Random Percentage (between 60% and 90%)
     // This ensures it looks like it's "mostly done" but varies every time.
     const randomPercent = Math.floor(Math.random() * (90 - 30 + 1) + 30);
@@ -66,20 +66,20 @@ function startLoadingSequence() {
 async function finishLoadingSequence() {
   const elapsed = Date.now() - loadingStartTime;
   const remaining = Math.max(0, 2000 - elapsed);
-  
+
   if (remaining > 0) {
     await new Promise(r => setTimeout(r, remaining));
   }
-  
+
   // Fill to 100%
   progressFill.classList.remove("filling");
   progressFill.classList.add("complete");
   // Force width to 100% (overriding the random width)
   progressFill.style.width = "calc(100% - 4px)";
-  
+
   await new Promise(r => setTimeout(r, 300));
   await new Promise(r => setTimeout(r, 500));
-  
+
   if (DOM.loading) DOM.loading.style.display = "none";
 }
 
@@ -91,11 +91,10 @@ function usernameToEmail(username) {
 
 function showMessage(element, message, isSuccess = false, duration = 3000) {
   if (messageTimeout) clearTimeout(messageTimeout);
-  
+
   element.textContent = message;
   element.style.opacity = "1";
-  element.style.maxHeight = "100px";
-  
+
   if (isSuccess) {
     element.classList.add("success");
   } else {
@@ -104,7 +103,6 @@ function showMessage(element, message, isSuccess = false, duration = 3000) {
 
   messageTimeout = setTimeout(() => {
     element.style.opacity = "0";
-    element.style.maxHeight = "0";
   }, duration);
 
   messageTimeout = setTimeout(() => {
@@ -115,7 +113,7 @@ function showMessage(element, message, isSuccess = false, duration = 3000) {
 function showContainer(containerName) {
   [DOM.loginContainer, DOM.videosContainer, DOM.adminContainer]
     .forEach(container => container.style.display = "none");
-  
+
   if (containerName === "login") DOM.loginContainer.style.display = "block";
   if (containerName === "videos") DOM.videosContainer.style.display = "block";
   if (containerName === "admin") DOM.adminContainer.style.display = "block";
@@ -123,17 +121,17 @@ function showContainer(containerName) {
 
 async function loadVideos() {
   if (!DOM.videoList) return;
-  
+
   DOM.videoList.innerHTML = "";
   DOM.videoList.style.transform = "scale(0.95)";
-  
+
   try {
     const snapshot = await db.collection("videos").orderBy("order").get();
     snapshot.forEach(doc => {
       const { title, url, order } = doc.data();
       createVideoItem(title, url, order);
     });
-    
+
     requestAnimationFrame(() => {
       DOM.videoList.style.transition = "transform 0.3s ease";
       DOM.videoList.style.transform = "scale(1)";
@@ -148,17 +146,17 @@ function createVideoItem(title, url, order) {
   item.className = "item";
   item.href = url;
   item.target = "_blank";
-  
+
   const thumbnail = document.createElement("div");
   thumbnail.className = "thumbnail";
-  
+
   const orderBadge = document.createElement("div");
   orderBadge.className = "order-number";
   orderBadge.textContent = order;
-  
+
   const titleText = document.createElement("div");
   titleText.textContent = title;
-  
+
   thumbnail.appendChild(orderBadge);
   thumbnail.appendChild(titleText);
   item.appendChild(thumbnail);
@@ -169,7 +167,7 @@ async function addVideo(title, url, position = null) {
   const videosRef = db.collection("videos");
   const snapshot = await videosRef.orderBy("order").get();
   const videos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  
+
   let newOrder;
   if (position === null || position > videos.length) {
     newOrder = videos.length + 1;
@@ -183,22 +181,22 @@ async function addVideo(title, url, position = null) {
     });
     await batch.commit();
   }
-  
+
   await videosRef.add({ title, url, order: newOrder });
 }
 
 function setupEventListeners() {
   DOM.loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    
+
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value.trim();
-    
+
     if (!username || !password) {
       showMessage(DOM.loginMessage, "Enter both username and password!");
       return;
     }
-    
+
     try {
       await auth.signInWithEmailAndPassword(usernameToEmail(username), password);
       DOM.loginForm.reset();
@@ -213,14 +211,14 @@ function setupEventListeners() {
     e.preventDefault();
     const title = document.getElementById("video-title").value.trim();
     const url = document.getElementById("video-url").value.trim();
-    
+
     if (!title || !url) {
       showMessage(DOM.adminMessage, "Enter both the title and URL!");
       return;
     }
-    
+
     showMessage(DOM.adminMessage, "Adding video...", true);
-    
+
     try {
       await addVideo(title, url);
       showMessage(DOM.adminMessage, "Video added successfully!", true);
@@ -253,21 +251,21 @@ auth.onAuthStateChanged(async (user) => {
 
   if (user) {
     const token = await user.getIdTokenResult();
-    
+
     if (token.claims.admin) {
       showContainer("admin");
       DOM.videosContainer.style.display = "block";
     } else {
       showContainer("videos");
     }
-    
+
     await loadVideos();
     DOM.logoutBtn.style.display = "block";
   } else {
     showContainer("login");
     DOM.logoutBtn.style.display = "none";
   }
-  
+
   await finishLoadingSequence();
   isFirstLoad = false;
 });

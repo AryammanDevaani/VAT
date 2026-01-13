@@ -57,16 +57,21 @@ h2 {
   border: 2px solid var(--ink-color);
   box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.15);
 }
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 ::-webkit-scrollbar {
   display: none;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
-html, body {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+html,
+body {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
+
 #admin-container,
 #videos-container {
   display: none;
@@ -199,7 +204,7 @@ button:hover {
   bottom: 2px;
   background: var(--ink-color);
   width: 0%;
-  transition: width 0s; 
+  transition: width 0s;
 }
 
 /* REMOVED 'width' from here. 
@@ -219,6 +224,11 @@ button:hover {
   font-weight: bold;
   color: var(--ink-color);
   text-transform: lowercase;
+  min-height: 1.5em;
+  /* Reserves space for one line of text */
+  opacity: 0;
+  /* Ensures it starts invisible */
+  transition: opacity 0.3s ease;
 }
 
 .message.success {
