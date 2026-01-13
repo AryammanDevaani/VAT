@@ -224,7 +224,6 @@ button:hover {
   font-weight: bold;
   color: var(--ink-color);
   text-transform: lowercase;
-  min-height: 1.5em;
   /* Reserves space for one line of text */
   opacity: 0;
   /* Ensures it starts invisible */
