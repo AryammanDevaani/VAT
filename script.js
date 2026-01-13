@@ -41,19 +41,15 @@ function startLoadingSequence() {
   if (DOM.loading) {
     DOM.loading.style.display = "flex";
     
-    // Reset Bar State
     progressFill.className = "progress-fill"; 
     progressFill.style.width = "0%";
     
     loadingStartTime = Date.now();
     
-    // Force Reflow
     void progressFill.offsetWidth; 
     
-    // Generate Random Percentage (between 60% and 90%)
     const randomPercent = Math.floor(Math.random() * (90 - 30 + 1) + 30);
 
-    // Start Animation
     requestAnimationFrame(() => {
       progressFill.classList.add("filling");
       progressFill.style.width = `calc(${randomPercent}% - 4px)`;
@@ -69,7 +65,6 @@ async function finishLoadingSequence() {
     await new Promise(r => setTimeout(r, remaining));
   }
   
-  // Fill to 100%
   progressFill.classList.remove("filling");
   progressFill.classList.add("complete");
   progressFill.style.width = "calc(100% - 4px)";
@@ -86,13 +81,11 @@ function usernameToEmail(username) {
   return username.trim().toLowerCase() + "@vat.in";
 }
 
-// Updated: Removed maxHeight manipulation to prevent layout jumps
 function showMessage(element, message, isSuccess = false, duration = 3000) {
   if (messageTimeout) clearTimeout(messageTimeout);
   
   element.textContent = message;
   element.style.opacity = "1";
-  // Removed element.style.maxHeight assignment
   
   if (isSuccess) {
     element.classList.add("success");
@@ -102,7 +95,6 @@ function showMessage(element, message, isSuccess = false, duration = 3000) {
 
   messageTimeout = setTimeout(() => {
     element.style.opacity = "0";
-    // Removed element.style.maxHeight assignment
   }, duration);
 
   messageTimeout = setTimeout(() => {
@@ -110,28 +102,39 @@ function showMessage(element, message, isSuccess = false, duration = 3000) {
   }, duration + 500);
 }
 
-// NEW: Handles the Login "Shake" Effect
 function triggerLoginError() {
   const inputs = DOM.loginContainer.querySelectorAll("input");
-  
-  // 1. Shake the container
   DOM.loginContainer.classList.add("shake-animation");
-  
-  // 2. Turn inputs red
   inputs.forEach(input => input.classList.add("input-error"));
 
-  // 3. Reset after animation (500ms)
   setTimeout(() => {
     DOM.loginContainer.classList.remove("shake-animation");
     inputs.forEach(input => input.classList.remove("input-error"));
   }, 500);
 }
 
+// NEW: Function to inject login inputs dynamically
+// This prevents iCloud/Browsers from detecting password fields too early
+function injectLoginInputs() {
+  // Only inject if they don't exist yet
+  if (!document.getElementById("username")) {
+    DOM.loginForm.innerHTML = `
+      <input type="text" id="username" placeholder="username" required>
+      <input type="password" id="password" placeholder="password" required>
+      <button type="submit">login</button>
+    `;
+  }
+}
+
 function showContainer(containerName) {
   [DOM.loginContainer, DOM.videosContainer, DOM.adminContainer]
     .forEach(container => container.style.display = "none");
   
-  if (containerName === "login") DOM.loginContainer.style.display = "block";
+  if (containerName === "login") {
+    // NEW: Inject inputs only when showing the login container
+    injectLoginInputs();
+    DOM.loginContainer.style.display = "block";
+  }
   if (containerName === "videos") DOM.videosContainer.style.display = "block";
   if (containerName === "admin") DOM.adminContainer.style.display = "block";
 }
@@ -206,10 +209,14 @@ function setupEventListeners() {
   DOM.loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+
+    if (!usernameInput || !passwordInput) return;
+
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
     
-    // UPDATED: Use shake instead of text message
     if (!username || !password) {
       triggerLoginError();
       return;
@@ -219,9 +226,7 @@ function setupEventListeners() {
       await auth.signInWithEmailAndPassword(usernameToEmail(username), password);
       DOM.loginForm.reset();
       DOM.adminMessage.textContent = "";
-      // Note: We don't need to clear loginMessage anymore as we aren't using it
     } catch (error) {
-      // UPDATED: Use shake instead of text message
       triggerLoginError();
     }
   });
@@ -257,13 +262,17 @@ function setupEventListeners() {
   });
 }
 
-// 3. START: Trigger loading immediately on script load
+// 3. START: Trigger loading immediately
 startLoadingSequence();
 
 auth.onAuthStateChanged(async (user) => {
   if (!isFirstLoad) {
     startLoadingSequence();
   }
+
+  // We wait for the loading sequence to finish VISUALLY first
+  // This ensures the inputs are injected only AFTER the loading screen is gone
+  await finishLoadingSequence();
 
   if (user) {
     const token = await user.getIdTokenResult();
@@ -278,11 +287,11 @@ auth.onAuthStateChanged(async (user) => {
     await loadVideos();
     DOM.logoutBtn.style.display = "block";
   } else {
+    // This will now inject the inputs dynamically
     showContainer("login");
     DOM.logoutBtn.style.display = "none";
   }
   
-  await finishLoadingSequence();
   isFirstLoad = false;
 });
 
