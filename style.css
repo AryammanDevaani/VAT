@@ -57,21 +57,16 @@ h2 {
   border: 2px solid var(--ink-color);
   box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.15);
 }
-
 /* Hide scrollbar for Chrome, Safari and Opera */
 ::-webkit-scrollbar {
   display: none;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
-html,
-body {
-  -ms-overflow-style: none;
-  /* IE and Edge */
-  scrollbar-width: none;
-  /* Firefox */
+html, body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
-
 #admin-container,
 #videos-container {
   display: none;
@@ -89,6 +84,7 @@ input {
   font-family: inherit;
   outline: none;
   border-radius: 0;
+  transition: border-color 0.3s ease;
 }
 
 input:focus {
@@ -204,12 +200,9 @@ button:hover {
   bottom: 2px;
   background: var(--ink-color);
   width: 0%;
-  transition: width 0s;
+  transition: width 0s; 
 }
 
-/* REMOVED 'width' from here. 
-   It is now handled by JS for the random percentage.
-*/
 .progress-fill.filling {
   transition: width 2s linear;
 }
@@ -224,10 +217,10 @@ button:hover {
   font-weight: bold;
   color: var(--ink-color);
   text-transform: lowercase;
-  min-height: 0.5em;
-  /* Reserves space for one line of text */
+  
+  /* UPDATED: Reserves space so Admin messages don't jump */
+  min-height: 1.5rem;
   opacity: 0;
-  /* Ensures it starts invisible */
   transition: opacity 0.3s ease;
 }
 
@@ -280,4 +273,26 @@ button:hover {
     margin: 2rem auto;
     box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.15);
   }
+}
+
+/* --- NEW: Login Error Animations --- */
+
+/* Shake Animation Keyframes */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(10px); }
+  60% { transform: translateX(-10px); }
+  80% { transform: translateX(10px); }
+}
+
+/* Applied to the input field on error */
+.input-error {
+  border-bottom: 2px solid #ff3333 !important;
+  color: #ff3333;
+}
+
+/* Applied to the card container on error */
+.shake-animation {
+  animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
 }
