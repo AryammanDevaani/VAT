@@ -1,303 +1,298 @@
-const App = (() => {
-  const Config = {
-    firebase: {
-      apiKey: "AIzaSyCGecLDtzjqcnNnedy6EVpsKJ2SZ6sNZEc",
-      authDomain: "vachanaryammantirth.firebaseapp.com",
-      projectId: "vachanaryammantirth",
-      storageBucket: "vachanaryammantirth.appspot.com",
-      messagingSenderId: "813547250594",
-      appId: "1:813547250594:web:777686d6503b966c9d08fb",
-      measurementId: "G-4G8SRM2RT6"
-    },
-    emailDomain: "@vat.in",
-    loadingDuration: 2000
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyCGecLDtzjqcnNnedy6EVpsKJ2SZ6sNZEc",
+  authDomain: "vachanaryammantirth.firebaseapp.com",
+  projectId: "vachanaryammantirth",
+  storageBucket: "vachanaryammantirth.appspot.com",
+  messagingSenderId: "813547250594",
+  appId: "1:813547250594:web:777686d6503b966c9d08fb",
+  measurementId: "G-4G8SRM2RT6"
+};
 
-  const State = {
-    isFirstLoad: true,
-    loadingStartTime: 0,
-    messageTimeout: null
-  };
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-  firebase.initializeApp(Config.firebase);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+const DOM = {
+  loginContainer: document.getElementById("login-container"),
+  videosContainer: document.getElementById("videos-container"),
+  adminContainer: document.getElementById("admin-container"),
+  addVideoForm: document.getElementById("add-video-form"),
+  adminMessage: document.getElementById("admin-message"),
+  loginMessage: document.getElementById("login-message"),
+  logoutBtn: document.getElementById("logout-btn"),
+  loginForm: document.getElementById("login-form"),
+  loading: document.getElementById("loading"),
+  videoList: document.querySelector(".list"),
+  progressBar: document.querySelector(".progress-bar")
+};
 
-  const DOM = {
-    containers: {
-      login: document.getElementById("login-container"),
-      videos: document.getElementById("videos-container"),
-      admin: document.getElementById("admin-container"),
-      loading: document.getElementById("loading"),
-    },
-    forms: {
-      login: document.getElementById("login-form"),
-      addVideo: document.getElementById("add-video-form"),
-    },
-    inputs: {
-      videoTitle: document.getElementById("video-title"),
-      videoUrl: document.getElementById("video-url"),
-    },
-    messages: {
-      login: document.getElementById("login-message"),
-      admin: document.getElementById("admin-message"),
-    },
-    buttons: {
-      logout: document.getElementById("logout-btn"),
-    },
-    lists: {
-      videos: document.querySelector(".list"),
-    },
-    loading: {
-      bar: document.querySelector(".progress-bar"),
-      fill: null
+// 1. SETUP: Create the fill element
+const progressFill = document.createElement("div");
+progressFill.className = "progress-fill";
+if (DOM.progressBar) {
+  DOM.progressBar.innerHTML = "";
+  DOM.progressBar.appendChild(progressFill);
+}
+
+let loadingStartTime = Date.now();
+let isFirstLoad = true;
+
+function startLoadingSequence() {
+  if (DOM.loading) {
+    DOM.loading.style.display = "flex";
+    
+    progressFill.className = "progress-fill"; 
+    progressFill.style.width = "0%";
+    
+    loadingStartTime = Date.now();
+    
+    void progressFill.offsetWidth; 
+    
+    const randomPercent = Math.floor(Math.random() * (90 - 30 + 1) + 30);
+
+    requestAnimationFrame(() => {
+      progressFill.classList.add("filling");
+      progressFill.style.width = `calc(${randomPercent}% - 4px)`;
+    });
+  }
+}
+
+async function finishLoadingSequence() {
+  const elapsed = Date.now() - loadingStartTime;
+  const remaining = Math.max(0, 2000 - elapsed);
+  
+  if (remaining > 0) {
+    await new Promise(r => setTimeout(r, remaining));
+  }
+  
+  progressFill.classList.remove("filling");
+  progressFill.classList.add("complete");
+  progressFill.style.width = "calc(100% - 4px)";
+  
+  await new Promise(r => setTimeout(r, 300));
+  await new Promise(r => setTimeout(r, 500));
+  
+  if (DOM.loading) DOM.loading.style.display = "none";
+}
+
+let messageTimeout;
+
+function usernameToEmail(username) {
+  return username.trim().toLowerCase() + "@vat.in";
+}
+
+function showMessage(element, message, isSuccess = false, duration = 3000) {
+  if (messageTimeout) clearTimeout(messageTimeout);
+  
+  element.textContent = message;
+  element.style.opacity = "1";
+  
+  if (isSuccess) {
+    element.classList.add("success");
+  } else {
+    element.classList.remove("success");
+  }
+
+  messageTimeout = setTimeout(() => {
+    element.style.opacity = "0";
+  }, duration);
+
+  messageTimeout = setTimeout(() => {
+    element.textContent = "";
+  }, duration + 500);
+}
+
+function triggerLoginError() {
+  const inputs = DOM.loginContainer.querySelectorAll("input");
+  DOM.loginContainer.classList.add("shake-animation");
+  inputs.forEach(input => input.classList.add("input-error"));
+
+  setTimeout(() => {
+    DOM.loginContainer.classList.remove("shake-animation");
+    inputs.forEach(input => input.classList.remove("input-error"));
+  }, 500);
+}
+
+// NEW: Function to inject login inputs dynamically
+// This prevents iCloud/Browsers from detecting password fields too early
+function injectLoginInputs() {
+  // Only inject if they don't exist yet
+  if (!document.getElementById("username")) {
+    DOM.loginForm.innerHTML = `
+      <input type="text" id="username" placeholder="username" required>
+      <input type="password" id="password" placeholder="password" required>
+      <button type="submit">login</button>
+    `;
+  }
+}
+
+function showContainer(containerName) {
+  [DOM.loginContainer, DOM.videosContainer, DOM.adminContainer]
+    .forEach(container => container.style.display = "none");
+  
+  if (containerName === "login") {
+    // NEW: Inject inputs only when showing the login container
+    injectLoginInputs();
+    DOM.loginContainer.style.display = "block";
+  }
+  if (containerName === "videos") DOM.videosContainer.style.display = "block";
+  if (containerName === "admin") DOM.adminContainer.style.display = "block";
+}
+
+async function loadVideos() {
+  if (!DOM.videoList) return;
+  
+  DOM.videoList.innerHTML = "";
+  DOM.videoList.style.transform = "scale(0.95)";
+  
+  try {
+    const snapshot = await db.collection("videos").orderBy("order").get();
+    snapshot.forEach(doc => {
+      const { title, url, order } = doc.data();
+      createVideoItem(title, url, order);
+    });
+    
+    requestAnimationFrame(() => {
+      DOM.videoList.style.transition = "transform 0.3s ease";
+      DOM.videoList.style.transform = "scale(1)";
+    });
+  } catch (err) {
+    console.error("Error loading videos:", err);
+  }
+}
+
+function createVideoItem(title, url, order) {
+  const item = document.createElement("a");
+  item.className = "item";
+  item.href = url;
+  item.target = "_blank";
+  
+  const thumbnail = document.createElement("div");
+  thumbnail.className = "thumbnail";
+  
+  const orderBadge = document.createElement("div");
+  orderBadge.className = "order-number";
+  orderBadge.textContent = order;
+  
+  const titleText = document.createElement("div");
+  titleText.textContent = title;
+  
+  thumbnail.appendChild(orderBadge);
+  thumbnail.appendChild(titleText);
+  item.appendChild(thumbnail);
+  DOM.videoList.appendChild(item);
+}
+
+async function addVideo(title, url, position = null) {
+  const videosRef = db.collection("videos");
+  const snapshot = await videosRef.orderBy("order").get();
+  const videos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  
+  let newOrder;
+  if (position === null || position > videos.length) {
+    newOrder = videos.length + 1;
+  } else {
+    newOrder = position;
+    const batch = db.batch();
+    videos.forEach(video => {
+      if (video.order >= position) {
+        batch.update(videosRef.doc(video.id), { order: video.order + 1 });
+      }
+    });
+    await batch.commit();
+  }
+  
+  await videosRef.add({ title, url, order: newOrder });
+}
+
+function setupEventListeners() {
+  DOM.loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+
+    if (!usernameInput || !passwordInput) return;
+
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
+    
+    if (!username || !password) {
+      triggerLoginError();
+      return;
     }
-  };
-
-  const UI = {
-    init: () => {
-      const fill = document.createElement("div");
-      fill.className = "progress-fill";
-      if (DOM.loading.bar) {
-        DOM.loading.bar.innerHTML = "";
-        DOM.loading.bar.appendChild(fill);
-        DOM.loading.fill = fill;
-      }
-    },
-
-    showContainer: (containerName) => {
-      Object.values(DOM.containers).forEach(el => {
-        if (el && el.id !== 'loading') el.style.display = "none";
-      });
-
-      if (containerName === "login") {
-        UI.injectLoginInputs();
-        DOM.containers.login.style.display = "block";
-      } else if (containerName === "app") {
-        DOM.containers.videos.style.display = "block";
-      }
-      
-      if (containerName === "admin") {
-         DOM.containers.admin.style.display = "block";
-         DOM.containers.videos.style.display = "block";
-      }
-    },
-
-    injectLoginInputs: () => {
-      if (!document.getElementById("username")) {
-        DOM.forms.login.innerHTML = `
-          <input type="text" id="username" placeholder="username" autocomplete="username" required>
-          <input type="password" id="password" placeholder="password" autocomplete="current-password" required>
-          <button type="submit">login</button>
-        `;
-      }
-    },
-
-    showMessage: (element, text, isSuccess = false) => {
-      if (State.messageTimeout) clearTimeout(State.messageTimeout);
-
-      element.textContent = text;
-      element.style.opacity = "1";
-      element.className = `message ${isSuccess ? 'success' : ''}`;
-
-      State.messageTimeout = setTimeout(() => {
-        element.style.opacity = "0";
-        setTimeout(() => element.textContent = "", 500);
-      }, 3000);
-    },
-
-    triggerErrorShake: (container) => {
-      const inputs = container.querySelectorAll("input");
-      container.classList.add("shake-animation");
-      inputs.forEach(input => input.classList.add("input-error"));
-
-      setTimeout(() => {
-        container.classList.remove("shake-animation");
-        inputs.forEach(input => input.classList.remove("input-error"));
-      }, 500);
-    },
-
-    renderVideoList: (videos) => {
-      DOM.lists.videos.innerHTML = "";
-      DOM.lists.videos.style.transform = "scale(0.95)";
-
-      const fragment = document.createDocumentFragment();
-
-      videos.forEach(({ title, url, order }) => {
-        const item = document.createElement("a");
-        item.className = "item";
-        item.href = url;
-        item.target = "_blank";
-        item.rel = "noopener noreferrer";
-
-        item.innerHTML = `
-          <div class="thumbnail">
-            <div class="order-number">${order}</div>
-            <div>${title}</div>
-          </div>
-        `;
-        fragment.appendChild(item);
-      });
-
-      DOM.lists.videos.appendChild(fragment);
-
-      requestAnimationFrame(() => {
-        DOM.lists.videos.style.transition = "transform 0.3s ease";
-        DOM.lists.videos.style.transform = "scale(1)";
-      });
+    
+    try {
+      await auth.signInWithEmailAndPassword(usernameToEmail(username), password);
+      DOM.loginForm.reset();
+      DOM.adminMessage.textContent = "";
+    } catch (error) {
+      triggerLoginError();
     }
-  };
+  });
 
-  const Loading = {
-    start: () => {
-      if (!DOM.containers.loading) return;
-      
-      DOM.containers.loading.style.display = "flex";
-      DOM.loading.fill.className = "progress-fill";
-      DOM.loading.fill.style.width = "0%";
-      
-      State.loadingStartTime = Date.now();
-
-      void DOM.loading.fill.offsetWidth; 
-
-      const randomPercent = Math.floor(Math.random() * (90 - 30 + 1) + 30);
-      requestAnimationFrame(() => {
-        DOM.loading.fill.classList.add("filling");
-        DOM.loading.fill.style.width = `calc(${randomPercent}% - 4px)`;
-      });
-    },
-
-    finish: async () => {
-      const elapsed = Date.now() - State.loadingStartTime;
-      const remaining = Math.max(0, Config.loadingDuration - elapsed);
-
-      if (remaining > 0) {
-        await new Promise(r => setTimeout(r, remaining));
-      }
-
-      DOM.loading.fill.classList.remove("filling");
-      DOM.loading.fill.classList.add("complete");
-      DOM.loading.fill.style.width = "calc(100% - 4px)";
-
-      await new Promise(r => setTimeout(r, 800));
-      DOM.containers.loading.style.display = "none";
+  DOM.addVideoForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const title = document.getElementById("video-title").value.trim();
+    const url = document.getElementById("video-url").value.trim();
+    
+    if (!title || !url) {
+      showMessage(DOM.adminMessage, "Enter both the title and URL!");
+      return;
     }
-  };
+    
+    showMessage(DOM.adminMessage, "Adding video...", true);
+    
+    try {
+      await addVideo(title, url);
+      showMessage(DOM.adminMessage, "Video added successfully!", true);
+      DOM.addVideoForm.reset();
+      await loadVideos();
+    } catch (error) {
+      showMessage(DOM.adminMessage, "Error adding video!");
+    }
+  });
 
-  const Data = {
-    getVideos: async () => {
-      try {
-        const snapshot = await db.collection("videos").orderBy("order").get();
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      } catch (error) {
-        console.error("Fetch error:", error);
-        return [];
-      }
-    },
+  DOM.logoutBtn.addEventListener("click", async () => {
+    try {
+      await auth.signOut();
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  });
+}
 
-    addVideo: async (title, url, position = null) => {
-      const videosRef = db.collection("videos");
-      const currentVideos = await Data.getVideos();
-      
-      let newOrder = position === null || position > currentVideos.length 
-        ? currentVideos.length + 1 
-        : position;
+// 3. START: Trigger loading immediately
+startLoadingSequence();
 
-      if (newOrder <= currentVideos.length) {
-        const batch = db.batch();
-        currentVideos.forEach(video => {
-          if (video.order >= newOrder) {
-            batch.update(videosRef.doc(video.id), { order: video.order + 1 });
-          }
-        });
-        await batch.commit();
-      }
+auth.onAuthStateChanged(async (user) => {
+  if (!isFirstLoad) {
+    startLoadingSequence();
+  }
 
-      await videosRef.add({ title, url, order: newOrder });
-    },
+  // We wait for the loading sequence to finish VISUALLY first
+  // This ensures the inputs are injected only AFTER the loading screen is gone
+  await finishLoadingSequence();
 
-    login: async (username, password) => {
-      const email = username.trim().toLowerCase() + Config.emailDomain;
-      return auth.signInWithEmailAndPassword(email, password);
-    },
+  if (user) {
+    const token = await user.getIdTokenResult();
+    
+    if (token.claims.admin) {
+      showContainer("admin");
+      DOM.videosContainer.style.display = "block";
+    } else {
+      showContainer("videos");
+    }
+    
+    await loadVideos();
+    DOM.logoutBtn.style.display = "block";
+  } else {
+    // This will now inject the inputs dynamically
+    showContainer("login");
+    DOM.logoutBtn.style.display = "none";
+  }
+  
+  isFirstLoad = false;
+});
 
-    logout: () => auth.signOut()
-  };
-
-  const setupEvents = () => {
-    DOM.forms.login.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const userField = document.getElementById("username");
-      const passField = document.getElementById("password");
-      
-      if (!userField || !passField) return;
-
-      try {
-        await Data.login(userField.value, passField.value);
-        DOM.forms.login.reset();
-      } catch (error) {
-        UI.triggerErrorShake(DOM.containers.login);
-      }
-    });
-
-    DOM.forms.addVideo.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const title = DOM.inputs.videoTitle.value.trim();
-      const url = DOM.inputs.videoUrl.value.trim();
-
-      if (!title || !url) {
-        UI.showMessage(DOM.messages.admin, "Enter both title and URL");
-        return;
-      }
-
-      UI.showMessage(DOM.messages.admin, "Adding video...", true);
-      
-      try {
-        await Data.addVideo(title, url);
-        UI.showMessage(DOM.messages.admin, "Success!", true);
-        DOM.forms.addVideo.reset();
-        
-        const videos = await Data.getVideos();
-        UI.renderVideoList(videos);
-      } catch (error) {
-        UI.showMessage(DOM.messages.admin, "Error adding video");
-      }
-    });
-
-    DOM.buttons.logout.addEventListener("click", () => {
-      Data.logout().catch(console.error);
-    });
-  };
-
-  const init = () => {
-    UI.init();
-    Loading.start();
-    setupEvents();
-
-    auth.onAuthStateChanged(async (user) => {
-      if (!State.isFirstLoad) Loading.start();
-      
-      await Loading.finish();
-
-      if (user) {
-        const token = await user.getIdTokenResult();
-        const isAdmin = token.claims.admin;
-        
-        UI.showContainer(isAdmin ? "admin" : "app");
-        DOM.buttons.logout.style.display = "block";
-        
-        const videos = await Data.getVideos();
-        UI.renderVideoList(videos);
-      } else {
-        UI.showContainer("login");
-        DOM.buttons.logout.style.display = "none";
-      }
-
-      State.isFirstLoad = false;
-    });
-  };
-
-  return { init };
-})();
-
-App.init();
+setupEventListeners();

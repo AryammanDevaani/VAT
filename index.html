@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VAT</title>
-  
-  <meta name="description" content="Video Administration Tool">
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+  <link rel="stylesheet" href="https://developer.apple.com/fonts/sf-pro.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <link rel="icon" type="image/png" href="/favicon.png">
+
   <link rel="apple-touch-icon" href="/favicon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-  <link rel="stylesheet" href="https://developer.apple.com/fonts/sf-pro.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 
   <meta http-equiv="Content-Security-Policy" content="
@@ -25,45 +31,41 @@
     frame-ancestors 'none';
   ">
 </head>
+
 <body>
+  <h1>VAT</h1>
 
-  <header>
-    <h1>VAT</h1>
-  </header>
+  <div id="loading">
+    <p>LOADING</p>
+    <div class="progress-bar"></div>
+  </div>
 
-  <main>
-    <div id="loading" role="status" aria-label="Loading">
-      <p>LOADING</p>
-      <div class="progress-bar"></div>
+  <div id="login-container" class="card-container">
+    <form id="login-form">
+      <input type="text" id="username" placeholder="username" required>
+      <input type="password" id="password" placeholder="password" required>
+      <button type="submit">login</button>
+    </form>
+    <p class="message" id="login-message"></p>
+  </div>
+
+  <div id="admin-container" class="card-container">
+    <form id="add-video-form">
+      <input type="text" id="video-title" placeholder="title" required>
+      <input type="url" id="video-url" placeholder="URL" required>
+      <button type="submit">add video</button>
+    </form>
+    <p class="message" id="admin-message"></p>
+  </div>
+
+  <div id="videos-container">
+    <div id="logout-container">
+      <button id="logout-btn">logout</button>
     </div>
+    <div class="list" id="video-list"></div>
+  </div>
 
-    <section id="login-container" class="card-container" aria-hidden="true">
-      <form id="login-form">
-        </form>
-      <p class="message" id="login-message" aria-live="polite"></p>
-    </section>
-
-    <section id="admin-container" class="card-container" aria-hidden="true">
-      <form id="add-video-form">
-        <input type="text" id="video-title" placeholder="Video Title" aria-label="Video Title" required>
-        <input type="url" id="video-url" placeholder="Video URL" aria-label="Video URL" required>
-        <button type="submit">Add Video</button>
-      </form>
-      <p class="message" id="admin-message" aria-live="polite"></p>
-    </section>
-
-    <section id="videos-container" aria-hidden="true">
-      <div id="logout-container">
-        <button id="logout-btn" aria-label="Logout">Logout</button>
-      </div>
-      <div class="list" id="video-list"></div>
-    </section>
-  </main>
-
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-  
   <script src="script.js"></script>
 </body>
+
 </html>
