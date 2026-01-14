@@ -1,4 +1,5 @@
 :root {
+  /* Colors */
   --color-bg: #fcfcfc;
   --color-ink: #111111;
   --color-grid: #e5e5e5;
@@ -6,12 +7,15 @@
   --color-error: #ff3333;
   --color-placeholder: #666666;
 
+  /* Typography */
   --font-mono: 'Courier New', Courier, 'Lucida Sans Typewriter', monospace;
   
+  /* Layout */
   --max-width-card: 450px;
   --max-width-grid: 1000px;
 }
 
+/* --- Base Reset --- */
 * {
   margin: 0;
   padding: 0;
@@ -25,12 +29,14 @@ body {
   padding: 2rem;
   min-height: 100vh;
   
+  /* Grid Pattern Background */
   background-image:
     linear-gradient(var(--color-grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
   background-size: 25px 25px;
   background-position: center top;
   
+  /* Hide scrollbars */
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -39,6 +45,7 @@ body::-webkit-scrollbar {
   display: none;
 }
 
+/* --- Typography --- */
 h1 {
   font-size: 3.5rem;
   font-weight: 700;
@@ -51,6 +58,7 @@ h1 {
   padding: 0 1rem 0.5rem 1rem;
 }
 
+/* --- Layout Containers --- */
 .card-container {
   max-width: var(--max-width-card);
   margin: 3rem auto;
@@ -58,11 +66,17 @@ h1 {
   background: var(--color-white);
   border: 2px solid var(--color-ink);
   box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.15);
-  display: none;
+  display: none; /* Hidden by default */
 }
 
 #videos-container {
   display: none;
+}
+
+/* --- Form Elements --- */
+/* Fix: Explicitly inherit font for inputs and buttons */
+input, button {
+  font-family: inherit;
 }
 
 input {
@@ -74,7 +88,6 @@ input {
   border-bottom: 2px solid var(--color-ink);
   color: var(--color-ink);
   font-size: 1.1rem;
-  font-family: inherit;
   outline: none;
   transition: border-color 0.3s ease;
 }
@@ -89,28 +102,36 @@ input::placeholder {
   font-size: 0.95rem;
 }
 
+/* Updated to match the "Outline -> Solid" style of the Logout button */
 button {
   width: 100%;
   padding: 1rem;
   margin-top: 0.5rem;
-  background: var(--color-ink);
-  color: var(--color-white);
+  
+  /* Default State: Transparent with Border (Like Logout) */
+  background: transparent;
+  color: var(--color-ink);
   border: 2px solid var(--color-ink);
+  
   font-size: 1rem;
   font-weight: bold;
   text-transform: uppercase;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+  transition: all 0.2s ease;
   letter-spacing: 1px;
 }
 
 button:hover {
-  background: transparent;
-  color: var(--color-ink);
-  box-shadow: 4px 4px 0 var(--color-ink);
-  transform: translate(-2px, -2px);
+  /* Hover State: Solid Fill (Like Logout) */
+  background: var(--color-ink);
+  color: var(--color-white);
+  
+  /* Removed the pop-out shadow/transform to match Logout behavior */
+  box-shadow: none;
+  transform: none;
 }
 
+/* --- Video List Grid --- */
 .list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -153,6 +174,7 @@ button:hover {
   background: #eee;
 }
 
+/* --- Components: Loading --- */
 #loading {
   position: fixed;
   inset: 0;
@@ -191,6 +213,7 @@ button:hover {
   transition: width 0.3s ease-out;
 }
 
+/* --- Components: Messages --- */
 .message {
   margin-top: 1rem;
   text-align: center;
@@ -205,6 +228,7 @@ button:hover {
   text-decoration: underline;
 }
 
+/* --- Components: Logout --- */
 #logout-container {
   display: flex;
   justify-content: center;
@@ -214,21 +238,13 @@ button:hover {
 }
 
 #logout-btn {
+  /* Layout overrides only - visual styles inherited from generic button */
   display: none;
   width: auto;
   padding: 0.5rem 2rem;
-  background: transparent;
-  color: var(--color-ink);
-  border: 1px solid var(--color-ink);
 }
 
-#logout-btn:hover {
-  background: var(--color-ink);
-  color: var(--color-white);
-  box-shadow: none;
-  transform: none;
-}
-
+/* --- Animations: Error Shake --- */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20% { transform: translateX(-10px); }
@@ -246,6 +262,7 @@ button:hover {
   animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
 }
 
+/* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
   body {
     padding: 1rem;
