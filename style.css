@@ -235,7 +235,6 @@ button:hover {
   display: flex;
   justify-content: center;
   margin-bottom: 2rem;
-  border-bottom: 1px dashed var(--color-ink);
   padding-bottom: 2rem;
 }
 
