@@ -34,37 +34,52 @@ if (DOM.progressBar) {
   DOM.progressBar.appendChild(progressFill);
 }
 
-let loadingStartTime = Date.now();
-let isFirstLoad = true;
+let loadingTimeout; // NEW: Holds the timer ID
 
 function startLoadingSequence() {
-  if (DOM.loading) {
-    DOM.loading.style.display = "flex";
-    
+  // Clear any existing timer to prevent overlaps
+  if (loadingTimeout) clearTimeout(loadingTimeout);
+
+  // Ensure it is HIDDEN initially
+  if (DOM.loading) DOM.loading.style.display = "none";
+  
+  if (progressFill) {
     progressFill.className = "progress-fill"; 
     progressFill.style.width = "0%";
-    
-    loadingStartTime = Date.now();
-    
-    void progressFill.offsetWidth; 
-    
-    const randomPercent = Math.floor(Math.random() * (90 - 30 + 1) + 30);
-
-    requestAnimationFrame(() => {
-      progressFill.classList.add("filling");
-      progressFill.style.width = `calc(${randomPercent}% - 4px)`;
-    });
   }
+  
+  // START GRACE PERIOD:
+  // We wait 500ms. If loading finishes before this, the code inside never runs.
+  loadingTimeout = setTimeout(() => {
+    if (DOM.loading) {
+      DOM.loading.style.display = "flex"; // NOW we show it
+      
+      loadingStartTime = Date.now();
+      void progressFill.offsetWidth; 
+      
+      const randomPercent = Math.floor(Math.random() * (90 - 30 + 1) + 30);
+      requestAnimationFrame(() => {
+        progressFill.classList.add("filling");
+        progressFill.style.width = `calc(${randomPercent}% - 4px)`;
+      });
+    }
+  }, 500); // 500ms delay
 }
 
 async function finishLoadingSequence() {
-  const elapsed = Date.now() - loadingStartTime;
-  const remaining = Math.max(0, 2000 - elapsed);
+  // CRITICAL: Cancel the "show" timer immediately!
+  // If this runs before 500ms, the loading screen never turns to "flex".
+  if (loadingTimeout) clearTimeout(loadingTimeout);
   
-  if (remaining > 0) {
-    await new Promise(r => setTimeout(r, remaining));
+  // Check if it's actually visible
+  const isVisible = DOM.loading && window.getComputedStyle(DOM.loading).display !== "none";
+
+  // If it's hidden, we are done. No flash, no animation.
+  if (!isVisible) {
+    return;
   }
   
+  // If we are here, the screen IS visible, so we animate the completion cleanly.
   progressFill.classList.remove("filling");
   progressFill.classList.add("complete");
   progressFill.style.width = "calc(100% - 4px)";
@@ -113,10 +128,7 @@ function triggerLoginError() {
   }, 500);
 }
 
-// NEW: Function to inject login inputs dynamically
-// This prevents iCloud/Browsers from detecting password fields too early
 function injectLoginInputs() {
-  // Only inject if they don't exist yet
   if (!document.getElementById("username")) {
     DOM.loginForm.innerHTML = `
       <input type="text" id="username" placeholder="username" required>
@@ -131,7 +143,6 @@ function showContainer(containerName) {
     .forEach(container => container.style.display = "none");
   
   if (containerName === "login") {
-    // NEW: Inject inputs only when showing the login container
     injectLoginInputs();
     DOM.loginContainer.style.display = "block";
   }
@@ -262,16 +273,18 @@ function setupEventListeners() {
   });
 }
 
-// 3. START: Trigger loading immediately
+// 3. START: Trigger loading logic (which now includes the wait)
 startLoadingSequence();
+
+let loadingStartTime = Date.now();
+let isFirstLoad = true;
 
 auth.onAuthStateChanged(async (user) => {
   if (!isFirstLoad) {
     startLoadingSequence();
   }
 
-  // We wait for the loading sequence to finish VISUALLY first
-  // This ensures the inputs are injected only AFTER the loading screen is gone
+  // This will cancel the timer if it's fast!
   await finishLoadingSequence();
 
   if (user) {
@@ -287,7 +300,6 @@ auth.onAuthStateChanged(async (user) => {
     await loadVideos();
     DOM.logoutBtn.style.display = "block";
   } else {
-    // This will now inject the inputs dynamically
     showContainer("login");
     DOM.logoutBtn.style.display = "none";
   }
