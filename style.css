@@ -15,11 +15,24 @@
   --max-width-grid: 1000px;
 }
 
-/* --- Base Reset --- */
+/* --- Base Reset & Scrollbar Hiding --- */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+/* Hide scrollbar globally for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
+  width: 0px;
+  background: transparent;
+}
+
+/* Hide scrollbar globally for IE, Edge and Firefox */
+html, body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 body {
@@ -35,14 +48,6 @@ body {
     linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
   background-size: 25px 25px;
   background-position: center top;
-  
-  /* Hide scrollbars */
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-body::-webkit-scrollbar {
-  display: none;
 }
 
 /* --- Typography --- */
@@ -74,7 +79,6 @@ h1 {
 }
 
 /* --- Form Elements --- */
-/* Fix: Explicitly inherit font for inputs and buttons */
 input, button {
   font-family: inherit;
 }
@@ -102,13 +106,12 @@ input::placeholder {
   font-size: 0.95rem;
 }
 
-/* Updated to match the "Outline -> Solid" style of the Logout button */
 button {
   width: 100%;
   padding: 1rem;
   margin-top: 0.5rem;
   
-  /* Default State: Transparent with Border (Like Logout) */
+  /* Default State: Transparent with Border */
   background: transparent;
   color: var(--color-ink);
   border: 2px solid var(--color-ink);
@@ -122,11 +125,9 @@ button {
 }
 
 button:hover {
-  /* Hover State: Solid Fill (Like Logout) */
+  /* Hover State: Solid Fill */
   background: var(--color-ink);
   color: var(--color-white);
-  
-  /* Removed the pop-out shadow/transform to match Logout behavior */
   box-shadow: none;
   transform: none;
 }
@@ -179,7 +180,8 @@ button:hover {
   position: fixed;
   inset: 0;
   background: var(--color-bg);
-  display: none;
+  /* CRITICAL: Must be none so JS can decide when to show it */
+  display: none; 
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -238,7 +240,6 @@ button:hover {
 }
 
 #logout-btn {
-  /* Layout overrides only - visual styles inherited from generic button */
   display: none;
   width: auto;
   padding: 0.5rem 2rem;
