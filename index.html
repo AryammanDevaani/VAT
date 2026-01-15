@@ -5,22 +5,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VAT</title>
-
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-
   <link rel="stylesheet" href="https://developer.apple.com/fonts/sf-pro.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
   <link rel="icon" type="image/png" href="/favicon.png">
-
   <link rel="apple-touch-icon" href="/favicon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-
   <link rel="stylesheet" href="style.css">
-
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
     script-src 'self' https://www.gstatic.com;
@@ -34,12 +28,10 @@
 
 <body>
   <h1>VAT</h1>
-
   <div id="loading">
     <p>LOADING</p>
     <div class="progress-bar"></div>
   </div>
-
   <div id="login-container" class="card-container">
     <form id="login-form">
       <input type="text" id="username" placeholder="username" required>
@@ -48,7 +40,6 @@
     </form>
     <p class="message" id="login-message"></p>
   </div>
-
   <div id="admin-container" class="card-container">
     <form id="add-video-form">
       <input type="text" id="video-title" placeholder="title" required>
@@ -57,14 +48,12 @@
     </form>
     <p class="message" id="admin-message"></p>
   </div>
-
   <div id="videos-container">
     <div id="logout-container">
       <button id="logout-btn">logout</button>
     </div>
     <div class="list" id="video-list"></div>
   </div>
-
   <script src="script.js"></script>
 </body>
 
